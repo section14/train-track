@@ -1,0 +1,9 @@
+<div id="widget-list" class="bg-primary-100 p-3">
+    <ul>
+        {{range .Widgets}}
+        <li>Title: {{.Title}} - Value: {{.Value}}</li>
+        {{end}}
+    </ul>
+</div>
+
+<script src="/static/js/main.js"></script>
