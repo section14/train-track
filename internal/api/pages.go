@@ -7,9 +7,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func pageRoutes(mux *chi.Mux, s *Server) {
-    mux.Get("/", s.homePage)
-    mux.Get("/widgets", s.widgetPage)
+func pageRoutes(serveMux *chi.Mux, s *Server) {
+    serveMux.Get("/", s.homePage)
+    serveMux.Get("/exercises", s.exercisePage)
 }
 
 func (s *Server) homePage(w http.ResponseWriter, r *http.Request) {
@@ -19,8 +19,8 @@ func (s *Server) homePage(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func (s *Server) widgetPage(w http.ResponseWriter, r *http.Request) {
-    err := s.tpls.ExecuteTemplate(w, "pages/widgets.html", nil)
+func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
+    err := s.tpls.ExecuteTemplate(w, "pages/exercises.html", nil)
     if err != nil {
         fmt.Println("couldn't open widgets", err)
     }

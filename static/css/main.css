@@ -1,5 +1,98 @@
 @import "/static/css/theme.css";
 
+/* element styles */
+body, input, textarea, button {
+    font-family: sans-serif;
+    font-size: 18px;
+}
+
+body {
+    background-color: var(--med-100);
+    color: var(--dark);
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    background-color: var(--light);
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border: 2px solid var(--dark-300);
+    border-radius: 0.25rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--dark-400);
+    background-color: oklch(from var(--light) l calc(c + 0.04) h);
+}
+
+input::placeholder {
+    color: oklch(from var(--primary) calc(l + 0.08) c h);
+}
+
+select {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border: 1px solid var(--light);
+    border-radius: 0.25rem;
+}
+
+button {
+    color: var(--dark);
+    padding: 0.5rem;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 0.375rem;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: oklch(from var(--primary) calc(l - 0.08) c h);
+}
+
+/* end element styles */
+
+.btn-secondary {
+    background-color: var(--secondary);
+}
+
+.btn-secondary:hover {
+    background-color: oklch(from var(--secondary) calc(l - 0.08) c h);
+}
+
+.btn-save {
+    background-color: var(--secondary);
+}
+
+.btn-save:hover {
+    background-color: oklch(from var(--secondary) calc(l - 0.08) c h);
+}
+
+.btn-delete {
+    color: var(--secondary);
+    background-color: var(--dark);
+}
+
+.btn-delete:hover {
+    background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+}
+
 .layout {
     padding: 1.0rem;
     height: 500px;
@@ -18,13 +111,10 @@
     background-color: #e6e6e6;
 }
 
-.page-widgets {
-    background-color: #b3b3b3;
+.page-exercises {
+    background-color: var(--med-200);
 }
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-}
 
 /* Turn cross-document view-transitions on */
 /* Note that this at-rule is all that is needed to create the default cross-fade animation  */

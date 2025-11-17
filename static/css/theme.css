@@ -1,9 +1,11 @@
+/* Generated with Sculptor: https://github.com/section14/sculptor */
+
 :root {
-    --primary: #FF0000;
-    --secondary: #282FFF;
+    --primary: #63A361;
+    --secondary: #FFC50F;
     --info: #00D1D8;
-    --light: #FFFFFF;
-    --med: #CCCCCC;
+    --light: #FDE7B3;
+    --med: #5B532C;
     --dark: #2E2E2E;
 
     --primary-100: oklch(from var(--primary) calc(l + 0.35) c h);
@@ -638,43 +640,43 @@
     margin-bottom: 1.5rem;
 }
 
-.ml-0 {
+.ms-0 {
     margin-left: 0;
 }
 
-.ml-1 {
+.ms-1 {
     margin-left: 0.25rem;
 }
 
-.ml-2 {
+.ms-2 {
     margin-left: 0.5rem;
 }
 
-.ml-3 {
+.ms-3 {
     margin-left: 1.0rem;
 }
 
-.ml-4 {
+.ms-4 {
     margin-left: 1.5rem;
 }
 
-.mr-0 {
+.me-0 {
     margin-right: 0;
 }
 
-.mr-1 {
+.me-1 {
     margin-right: 0.25rem;
 }
 
-.mr-2 {
+.me-2 {
     margin-right: 0.5rem;
 }
 
-.mr-3 {
+.me-3 {
     margin-right: 1.0rem;
 }
 
-.mr-4 {
+.me-4 {
     margin-right: 1.5rem;
 }
 
@@ -698,23 +700,23 @@
     padding: 1.5rem;
 }
 
-.pt-0 {
+.ps-0 {
     padding-top: 0;
 }
 
-.pt-1 {
+.ps-1 {
     padding-top: 0.25rem;
 }
 
-.pt-2 {
+.ps-2 {
     padding-top: 0.5rem;
 }
 
-.pt-3 {
+.ps-3 {
     padding-top: 1.0rem;
 }
 
-.pt-4 {
+.ps-4 {
     padding-top: 1.5rem;
 }
 
@@ -758,23 +760,23 @@
     padding-left: 1.5rem;
 }
 
-.pr-0 {
+.pe-0 {
     padding-right: 0;
 }
 
-.pr-1 {
+.pe-1 {
     padding-right: 0.25rem;
 }
 
-.pr-2 {
+.pe-2 {
     padding-right: 0.5rem;
 }
 
-.pr-3 {
+.pe-3 {
     padding-right: 1.0rem;
 }
 
-.pr-4 {
+.pe-4 {
     padding-right: 1.5rem;
 }
 

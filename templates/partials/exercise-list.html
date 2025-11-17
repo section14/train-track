@@ -1,0 +1,28 @@
+<div id="widget-list" class="bg-primary-100 p-3">
+    <ul>
+        {{range .}}
+        <li>
+            {{.Name}}
+            <button id="ex-{{.ID}}" type="button" {{clicker .ID}} class="btn-delete ms-3">
+                Delete
+            </button>
+        </li>
+        {{end}}
+    </ul>
+</div>
+
+<script>
+    const deleteExercise = (id) => {
+        console.log("id: ", id)
+        /*
+        Delete(`/api/exercises/${id}`).then((res) => {
+            console.log("delete ok: ", res)
+        }).catch((err) => {
+            console.log("delete err: ", err)
+        })
+        */
+    }
+    alert("omg")
+</script>
+
+<script src="/static/js/main.js"></script>

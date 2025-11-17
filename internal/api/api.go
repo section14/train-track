@@ -14,14 +14,27 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 
+	"github.com/section14/train-track/internal/config"
+	"github.com/section14/train-track/internal/service"
+	"github.com/section14/train-track/internal/store"
 )
 
 type Server struct {
 	tpls *template.Template
+    exercise *service.ExerciseService
+    workout *service.WorkoutService
 }
 
-func NewServer(t *template.Template) *Server {
-	return &Server{tpls: t}
+func NewServer(
+    t *template.Template, 
+    exercise *service.ExerciseService, 
+    workout *service.WorkoutService) *Server {
+
+	return &Server{
+        tpls: t,
+        exercise: exercise,
+        workout: workout,
+    }
 }
 
 func handlers(mux *chi.Mux, s *Server) {
@@ -29,6 +42,7 @@ func handlers(mux *chi.Mux, s *Server) {
 
     apiMux := chi.NewRouter()
     partialsRoutes(apiMux, s)
+    postRoutes(apiMux, s)
 
     mux.Mount("/api", apiMux)
 }
@@ -37,6 +51,12 @@ func systemTemplates(rootDir string, funcMap template.FuncMap) (*template.Templa
     cleanRoot := filepath.Clean(rootDir)
     pfx := len(cleanRoot)+1
     root := template.New("")
+
+    //temp func test
+    //todo: I think you're going to have to write forward "dummy" declarations like this
+    root.Funcs(template.FuncMap{
+        "clicker": func(id int) template.HTMLAttr {return ""},
+    })
 
     err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
         if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -121,6 +141,8 @@ func ServeDev() {
     staticFS := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
 	mux.Handle("/static/*", staticFS)
 
+    fmt.Println("serving dev...")
+
 	Serve(mux, t)
 }
 
@@ -166,7 +188,17 @@ func ServeProd(templates embed.FS, static embed.FS) {
 }
 
 func Serve(mux *chi.Mux, t *template.Template) {
-	server := NewServer(t)
+    env := config.NewEnv()
+
+    //stores
+    exerciseStore := store.NewExerciseStore(env)
+    workoutStore := store.NewWorkoutStore(env)
+
+    //services
+    exerciseService := service.NewExerciseService(exerciseStore)
+    workoutService := service.NewWorkoutService(workoutStore)
+
+	server := NewServer(t, exerciseService, workoutService)
 	handlers(mux, server)
 
 	//addr := fmt.Sprintf("%s:%s", env.Location, env.Port)

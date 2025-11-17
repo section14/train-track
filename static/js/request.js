@@ -27,6 +27,34 @@ const Get = (url) => {
     })
 }
 
+const PostForm = (url, data) => {
+    return new Promise((resolve, reject) => {
+        fetch(url, { method: "post", body: new FormData(data) }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error POST'ing: ${response.status}`)
+            }
+
+            return resolve(response.text())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+const Delete = (url) => {
+    return new Promise((resolve, reject) => {
+        fetch(url, {method: "delete"}).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error deleting: ${response.status}`)
+            }
+
+            return resolve(response.text())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
 const swapContent = (url, container) => {
     Get(url).then((res) => {
         const cont = document.getElementById(container)

@@ -1,0 +1,73 @@
+{{ template "head.html" .}}
+{{ template "nav.html" .}}
+<div id="exercise-page" class="layout page-exercises">
+    <div>
+        You are at exercises
+    </div>
+    <img src="/static/images/image02.jpg" />
+
+    <button type="button" onclick="clickChange('abra')">Change em</button>
+
+    <h2>Add New Exercise</h2>
+    <form id="add-exercise-form">
+        <div class="mb-2" style="display: inline-flex;">
+            <input type="text" name="name" />
+            <button type="submit" class="btn-save ms-3">
+                Save
+            </button>
+        </div>
+    </form>
+
+    <div id='exercise-list-container' />
+
+    <script>
+        const addForm = document.getElementById("add-exercise-form")
+        const addExercise = (e) => {
+            e.preventDefault()
+            //const data = new FormData(e.target)
+            //console.log("e: ", ...data.entries())
+            //console.log(e.target.name)
+            PostForm("/api/exercises", addForm).then((res) => {
+                console.log("res: ", res)
+            }).catch((err) => {
+                console.log("post err", err)
+            })
+        }
+
+        addForm.addEventListener("submit", addExercise)
+
+        const clickChange = (id) => {
+            //working below with document. Sooo, do you need to get the 
+            //page element to dispatch event working. I though pushing it
+            //on to document would bubble to this div
+            const event = new CustomEvent('custom-page-event', {
+                detail: "hello",
+                bubbles: true,
+                cancelable: true,
+            })
+            document.dispatchEvent(event)
+
+            console.log("click id: ", id)
+            //swapContent("/api/partials/widgets/b", "widget-list-container")
+        }
+
+        const deleteExercise = (id) => {
+            console.log("id: ", id)
+            Delete(`/api/exercises/${id}`).then((res) => {
+                console.log("delete ok: ", res)
+            }).catch((err) => {
+                console.log("delete err: ", err)
+            })
+        } 
+
+        const dummyFunc = (e) => {
+            console.log("event: ", e.detail)
+        }
+
+        const page = document.getElementById("exercise-page")
+        document.addEventListener("custom-page-event", dummyFunc)
+
+        swapContent("/api/partials/exercises", "exercise-list-container")
+    </script>
+</div>
+{{ template "foot.html" .}}
