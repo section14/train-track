@@ -1,5 +1,6 @@
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
+{{ template "form-input.html" }}
 <div id="exercise-page" class="layout page-exercises">
     <div>
         You are at exercises
@@ -15,10 +16,12 @@
             <button type="submit" class="btn-save ms-3">
                 Save
             </button>
+            <form-input value="some value" />
         </div>
     </form>
 
     <div id='exercise-list-container' />
+
 
     <script>
         const addForm = document.getElementById("add-exercise-form")
@@ -37,7 +40,7 @@
         addForm.addEventListener("submit", addExercise)
 
         const clickChange = (id) => {
-            //working below with document. Sooo, do you need to get the 
+            //working below with document. Sooo, do you need to get the
             //page element to dispatch event working. I though pushing it
             //on to document would bubble to this div
             const event = new CustomEvent('custom-page-event', {
@@ -58,7 +61,7 @@
             }).catch((err) => {
                 console.log("delete err: ", err)
             })
-        } 
+        }
 
         const dummyFunc = (e) => {
             console.log("event: ", e.detail)

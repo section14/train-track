@@ -20,73 +20,82 @@ import (
 )
 
 type Server struct {
-	tpls *template.Template
-    exercise *service.ExerciseService
-    workout *service.WorkoutService
+	tpls     *template.Template
+	exercise *service.ExerciseService
+	workout  *service.WorkoutService
 }
 
 func NewServer(
-    t *template.Template, 
-    exercise *service.ExerciseService, 
-    workout *service.WorkoutService) *Server {
+	t *template.Template,
+	exercise *service.ExerciseService,
+	workout *service.WorkoutService) *Server {
 
 	return &Server{
-        tpls: t,
-        exercise: exercise,
-        workout: workout,
-    }
+		tpls:     t,
+		exercise: exercise,
+		workout:  workout,
+	}
 }
 
 func handlers(mux *chi.Mux, s *Server) {
 	pageRoutes(mux, s)
 
-    apiMux := chi.NewRouter()
-    partialsRoutes(apiMux, s)
-    postRoutes(apiMux, s)
+	apiMux := chi.NewRouter()
+	partialsRoutes(apiMux, s)
+	postRoutes(apiMux, s)
 
-    mux.Mount("/api", apiMux)
+	mux.Mount("/api", apiMux)
 }
 
-func systemTemplates(rootDir string, funcMap template.FuncMap) (*template.Template, error) {
-    cleanRoot := filepath.Clean(rootDir)
-    pfx := len(cleanRoot)+1
-    root := template.New("")
+func systemTemplates(
+    root *template.Template,
+    rootDir string,
+    funcMap template.FuncMap) (*template.Template, error) {
 
-    //temp func test
-    //todo: I think you're going to have to write forward "dummy" declarations like this
-    root.Funcs(template.FuncMap{
-        "clicker": func(id int) template.HTMLAttr {return ""},
-    })
+	cleanRoot := filepath.Clean(rootDir)
+	pfx := len(cleanRoot) + 1
+	//root := template.New("")
 
-    err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
-        if !info.IsDir() && strings.HasSuffix(path, ".html") {
-            if e1 != nil {
-                return e1
-            }
+	//temp func test
+	//todo: I think you're going to have to write forward "dummy" declarations like this
+	root.Funcs(template.FuncMap{
+		"clicker": func(id int) template.HTMLAttr { return "" },
+	})
 
-            b, e2 := os.ReadFile(path)
-            if e2 != nil {
-                return e2
-            }
+	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
+		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+			if e1 != nil {
+				return e1
+			}
 
-            name := path[pfx:]
-            t := root.New(name).Funcs(funcMap)
-            _, e2 = t.Parse(string(b))
-            if e2 != nil {
-                return e2
-            }
-        }
+			b, e2 := os.ReadFile(path)
+			if e2 != nil {
+				return e2
+			}
 
-        return nil
-    })
+			name := path[pfx:]
+			t := root.New(name).Funcs(funcMap)
+			_, e2 = t.Parse(string(b))
+			if e2 != nil {
+				return e2
+			}
+		}
 
-    return root, err
+		return nil
+	})
+
+	return root, err
 }
 
-func embeddedTemplates(files fs.FS, rootDir string, funcMap template.FuncMap) (*template.Template, error) {
+func embeddedTemplates(
+    root *template.Template,
+    files fs.FS,
+    rootDir string,
+    funcMap template.FuncMap) (*template.Template, error) {
+
 	cleanRoot := filepath.Clean(rootDir)
 	//pfx := len(cleanRoot) + 1
-	root := template.New("")
+	//root := template.New("")
 
 	err := fs.WalkDir(files, cleanRoot, func(path string, d fs.DirEntry, e1 error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {
@@ -130,18 +139,26 @@ func ServeDev() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
-    currentDir,_ := os.Getwd()
+	currentDir, _ := os.Getwd()
+	rootTemplates := template.New("")
 
-    t, err := systemTemplates(fmt.Sprintf("%s/templates", currentDir), nil)
+    //parse web component <template> files
+	wc, err := systemTemplates(rootTemplates, fmt.Sprintf("%s/static/components", currentDir), nil)
+	if err != nil {
+		log.Fatal("couldn't parse web component templates: ", err)
+	}
+
+    //parse regular templates
+	t, err := systemTemplates(wc, fmt.Sprintf("%s/templates", currentDir), nil)
 	if err != nil {
 		log.Fatal("couldn't parse templates: ", err)
 	}
 
 	//static files
-    staticFS := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
+	staticFS := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
 	mux.Handle("/static/*", staticFS)
 
-    fmt.Println("serving dev...")
+	fmt.Println("serving dev...")
 
 	Serve(mux, t)
 }
@@ -164,7 +181,9 @@ func ServeProd(templates embed.FS, static embed.FS) {
 	})
 
 	//t, err := template.ParseFS(tpl)
-	t, err := embeddedTemplates(sub, "", nil)
+	rootTemplates := template.New("")
+
+	t, err := embeddedTemplates(rootTemplates, sub, "", nil)
 	if err != nil {
 		log.Fatal("couldn't parse templates: ", err)
 	}
@@ -188,15 +207,15 @@ func ServeProd(templates embed.FS, static embed.FS) {
 }
 
 func Serve(mux *chi.Mux, t *template.Template) {
-    env := config.NewEnv()
+	env := config.NewEnv()
 
-    //stores
-    exerciseStore := store.NewExerciseStore(env)
-    workoutStore := store.NewWorkoutStore(env)
+	//stores
+	exerciseStore := store.NewExerciseStore(env)
+	workoutStore := store.NewWorkoutStore(env)
 
-    //services
-    exerciseService := service.NewExerciseService(exerciseStore)
-    workoutService := service.NewWorkoutService(workoutStore)
+	//services
+	exerciseService := service.NewExerciseService(exerciseStore)
+	workoutService := service.NewWorkoutService(workoutStore)
 
 	server := NewServer(t, exerciseService, workoutService)
 	handlers(mux, server)

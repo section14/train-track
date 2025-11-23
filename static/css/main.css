@@ -24,6 +24,25 @@ ul li {
     padding: 0;
 }
 
+/* shadow dom */
+form-input::part(input-field) {
+    background-color: var(--light);
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    border: 2px solid var(--dark-300);
+    border-radius: 0.25rem;
+}
+
+form-input::part(input-field):focus {
+    outline: none;
+    border-color: var(--dark-400);
+    background-color: oklch(from var(--light) l calc(c + 0.04) h);
+}
+
+form-input::part(input-field)::placeholder {
+    color: oklch(from var(--primary) calc(l + 0.08) c h);
+}
+
 input {
     background-color: var(--light);
     padding: 0.25rem 0.5rem;
