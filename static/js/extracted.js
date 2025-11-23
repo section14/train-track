@@ -1,28 +1,3 @@
-{{ template "head.html" .}}
-{{ template "nav.html" .}}
-{{ template "form-input.html" }}
-<div id="exercise-page" class="layout page-exercises">
-    <div>
-        You are at exercises
-    </div>
-    <img src="/static/images/image02.jpg" />
-
-    <button type="button" onclick="clickChange('abra')">Change em</button>
-
-    <h2>Add New Exercise</h2>
-    <form id="add-exercise-form">
-        <div class="mb-2" style="display: inline-flex;">
-            <form-input name="name" placeholder="Enter An Exercise..." value=""></form-input>
-            <button type="submit" class="btn-save ms-3">
-                Save
-            </button>
-        </div>
-    </form>
-
-    <div id='exercise-list-container' />
-
-
-    <script>
         const addExerciseForm = document.getElementById("add-exercise-form")
         const addExercise = (e) => {
             e.preventDefault()
@@ -72,6 +47,16 @@
         document.addEventListener("custom-page-event", dummyFunc)
 
         swapContent("/api/partials/exercises", "exercise-list-container")
-    </script>
-</div>
-{{ template "foot.html" .}}
+
+    const deleteTheExercise = (id) => {
+        console.log("id of delettion: ", id)
+        /*
+        Delete(`/api/exercises/${id}`).then((res) => {
+            console.log("delete ok: ", res)
+        }).catch((err) => {
+            console.log("delete err: ", err)
+        })
+        */
+    alert("omg")
+    }
+

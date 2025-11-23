@@ -63,6 +63,6 @@ const swapContent = (url, container) => {
             cont.innerHTML = res
         })
     }).catch((err) => {
-        console.log("error fetching widgets", err)
+        console.log("error fetching content", err)
     })
 }

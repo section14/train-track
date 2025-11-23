@@ -31,7 +31,7 @@ func postRoutes(serveMux *chi.Mux, s *Server) {
 }
 
 func DeleteClick(id int) string {
-   return fmt.Sprintf("onclick=\"deleteExercise(%d)\"", id)
+   return fmt.Sprintf("onclick=\"deleteTheExercise(%d)\"", id)
 }
 
 func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +57,6 @@ func (s *Server) addExercise(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusOK)
     }
 }
-
 
 func (s *Server) deleteExercise(w http.ResponseWriter, r *http.Request) {
     idStr := r.PathValue("id")

@@ -2,6 +2,7 @@ package api
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -15,78 +16,161 @@ import (
 	"github.com/go-chi/cors"
 
 	"github.com/section14/train-track/internal/config"
+	"github.com/section14/train-track/internal/extract"
 	"github.com/section14/train-track/internal/service"
 	"github.com/section14/train-track/internal/store"
 )
 
 type Server struct {
-	tpls *template.Template
-    exercise *service.ExerciseService
-    workout *service.WorkoutService
+	tpls     *template.Template
+	exercise *service.ExerciseService
+	workout  *service.WorkoutService
 }
 
 func NewServer(
-    t *template.Template, 
-    exercise *service.ExerciseService, 
-    workout *service.WorkoutService) *Server {
+	t *template.Template,
+	exercise *service.ExerciseService,
+	workout *service.WorkoutService) *Server {
 
 	return &Server{
-        tpls: t,
-        exercise: exercise,
-        workout: workout,
-    }
+		tpls:     t,
+		exercise: exercise,
+		workout:  workout,
+	}
 }
 
 func handlers(mux *chi.Mux, s *Server) {
 	pageRoutes(mux, s)
 
-    apiMux := chi.NewRouter()
-    partialsRoutes(apiMux, s)
-    postRoutes(apiMux, s)
+	apiMux := chi.NewRouter()
+	partialsRoutes(apiMux, s)
+	postRoutes(apiMux, s)
 
-    mux.Mount("/api", apiMux)
+	mux.Mount("/api", apiMux)
 }
 
-func systemTemplates(rootDir string, funcMap template.FuncMap) (*template.Template, error) {
-    cleanRoot := filepath.Clean(rootDir)
-    pfx := len(cleanRoot)+1
-    root := template.New("")
+func extractSystemTemplates(rootDir, targetDir, extractedDir string) ([]string, error) {
+	cleanRoot := filepath.Clean(rootDir)
+	js := make([]string, 0)
 
-    //temp func test
-    //todo: I think you're going to have to write forward "dummy" declarations like this
-    root.Funcs(template.FuncMap{
-        "clicker": func(id int) template.HTMLAttr {return ""},
-    })
+	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
+		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+			if e1 != nil {
+				return e1
+			}
 
-    err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
-        if !info.IsDir() && strings.HasSuffix(path, ".html") {
-            if e1 != nil {
-                return e1
-            }
+			newNode, e2 := extract.ExtractJs(path)
+			if e2 != nil {
+				return e2
+			}
 
-            b, e2 := os.ReadFile(path)
-            if e2 != nil {
-                return e2
-            }
+			//get current working directory
+			wd, _ := os.Getwd()
 
-            name := path[pfx:]
-            t := root.New(name).Funcs(funcMap)
-            _, e2 = t.Parse(string(b))
-            if e2 != nil {
-                return e2
-            }
-        }
+			parts := strings.Split(path, fmt.Sprintf("%s/%s", wd, targetDir))
+			htmlPath := filepath.Join(wd, extractedDir, parts[1])
 
-        return nil
-    })
+			//create new HTML file and write to it
+			err := os.MkdirAll(filepath.Dir(htmlPath), 0770)
+			if err != nil {
+				return err
+			}
 
-    return root, err
+			file, err := os.Create(htmlPath)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			_, err = file.Write(newNode.NewHTML)
+			if err != nil {
+				return err
+			}
+
+			if newNode.JsRemoved {
+				js = append(js, string(newNode.Js))
+			}
+
+		}
+
+		return nil
+	})
+
+	return js, err
 }
 
-func embeddedTemplates(files fs.FS, rootDir string, funcMap template.FuncMap) (*template.Template, error) {
+func buildJsFile(currentDir string, data []string) error {
+	//build extracted js file
+	file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
+	if err != nil {
+        return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
+	}
+	defer file.Close()
+
+	var sb strings.Builder
+
+	for _, j := range data {
+		sb.WriteString(j)
+		sb.WriteString("\n")
+	}
+
+	_, err = file.WriteString(sb.String())
+	if err != nil {
+        return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
+	}
+
+    return nil
+}
+
+func systemTemplates(
+	root *template.Template,
+	rootDir string,
+	funcMap template.FuncMap) (*template.Template, error) {
+
+	cleanRoot := filepath.Clean(rootDir)
+	pfx := len(cleanRoot) + 1
+	//root := template.New("")
+
+	//temp func test
+	//todo: I think you're going to have to write forward "dummy" declarations like this
+	root.Funcs(template.FuncMap{
+		"clicker": func(id int) template.HTMLAttr { return "" },
+	})
+
+	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
+		if !info.IsDir() && strings.HasSuffix(path, ".html") {
+			if e1 != nil {
+				return e1
+			}
+
+			b, e2 := os.ReadFile(path)
+			if e2 != nil {
+				return e2
+			}
+
+			name := path[pfx:]
+			t := root.New(name).Funcs(funcMap)
+			_, e2 = t.Parse(string(b))
+			if e2 != nil {
+				return e2
+			}
+		}
+
+		return nil
+	})
+
+	return root, err
+}
+
+func embeddedTemplates(
+	root *template.Template,
+	files fs.FS,
+	rootDir string,
+	funcMap template.FuncMap) (*template.Template, error) {
+
 	cleanRoot := filepath.Clean(rootDir)
 	//pfx := len(cleanRoot) + 1
-	root := template.New("")
+	//root := template.New("")
 
 	err := fs.WalkDir(files, cleanRoot, func(path string, d fs.DirEntry, e1 error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {
@@ -130,18 +214,39 @@ func ServeDev() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
-    currentDir,_ := os.Getwd()
+	currentDir, _ := os.Getwd()
+	templatesDir := fmt.Sprintf("%s/templates", currentDir)
+	extractedDir := fmt.Sprintf("%s/extracted", currentDir)
+	rootTemplates := template.New("")
 
-    t, err := systemTemplates(fmt.Sprintf("%s/templates", currentDir), nil)
+	//parse web component <template> files
+	wc, err := systemTemplates(rootTemplates, fmt.Sprintf("%s/static/components", currentDir), nil)
+	if err != nil {
+		log.Fatal("couldn't parse web component templates: ", err)
+	}
+
+	//extract
+	js, err := extractSystemTemplates(templatesDir, "templates", "extracted")
+	if err != nil {
+		log.Fatal("couldn't extract templates: ", err)
+	}
+
+    err = buildJsFile(currentDir, js)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+	//parse regular templates
+	t, err := systemTemplates(wc, extractedDir, nil)
 	if err != nil {
 		log.Fatal("couldn't parse templates: ", err)
 	}
 
 	//static files
-    staticFS := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
+	staticFS := http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))
 	mux.Handle("/static/*", staticFS)
 
-    fmt.Println("serving dev...")
+	fmt.Println("serving dev...")
 
 	Serve(mux, t)
 }
@@ -164,7 +269,9 @@ func ServeProd(templates embed.FS, static embed.FS) {
 	})
 
 	//t, err := template.ParseFS(tpl)
-	t, err := embeddedTemplates(sub, "", nil)
+	rootTemplates := template.New("")
+
+	t, err := embeddedTemplates(rootTemplates, sub, "", nil)
 	if err != nil {
 		log.Fatal("couldn't parse templates: ", err)
 	}
@@ -188,15 +295,15 @@ func ServeProd(templates embed.FS, static embed.FS) {
 }
 
 func Serve(mux *chi.Mux, t *template.Template) {
-    env := config.NewEnv()
+	env := config.NewEnv()
 
-    //stores
-    exerciseStore := store.NewExerciseStore(env)
-    workoutStore := store.NewWorkoutStore(env)
+	//stores
+	exerciseStore := store.NewExerciseStore(env)
+	workoutStore := store.NewWorkoutStore(env)
 
-    //services
-    exerciseService := service.NewExerciseService(exerciseStore)
-    workoutService := service.NewWorkoutService(workoutStore)
+	//services
+	exerciseService := service.NewExerciseService(exerciseStore)
+	workoutService := service.NewWorkoutService(workoutStore)
 
 	server := NewServer(t, exerciseService, workoutService)
 	handlers(mux, server)
