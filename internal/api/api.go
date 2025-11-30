@@ -2,6 +2,7 @@ package api
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -48,7 +49,7 @@ func handlers(mux *chi.Mux, s *Server) {
 	mux.Mount("/api", apiMux)
 }
 
-func extractSystemTemplates(rootDir string, extractedDir string) ([]string, error) {
+func extractSystemTemplates(rootDir, targetDir, extractedDir string) ([]string, error) {
 	cleanRoot := filepath.Clean(rootDir)
 	js := make([]string, 0)
 
@@ -63,32 +64,31 @@ func extractSystemTemplates(rootDir string, extractedDir string) ([]string, erro
 				return e2
 			}
 
-            //get current working directory
-            wd, _ := os.Getwd()
+			//get current working directory
+			wd, _ := os.Getwd()
 
-            parts := strings.Split(path, fmt.Sprintf("%s/templates", wd))
-            htmlPath := filepath.Join(wd, extractedDir, parts[1])
+			parts := strings.Split(path, fmt.Sprintf("%s/%s", wd, targetDir))
+			htmlPath := filepath.Join(wd, extractedDir, parts[1])
 
-            //create new HTML file and write to it
-            err := os.MkdirAll(filepath.Dir(htmlPath), 0770)
-            if err != nil {
-                return err
-            }
+			//create new HTML file and write to it
+			err := os.MkdirAll(filepath.Dir(htmlPath), 0770)
+			if err != nil {
+				return err
+			}
 
-            file, err := os.Create(htmlPath)
-            if err != nil {
-                return err
-            }
-            defer file.Close()
+			file, err := os.Create(htmlPath)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
 
-            _,err = file.Write(newNode.NewHTML)
-            if err != nil {
-                return err
-            }
-
+			_, err = file.Write(newNode.NewHTML)
+			if err != nil {
+				return err
+			}
 
 			if newNode.JsRemoved {
-                js = append(js, string(newNode.Js))
+				js = append(js, string(newNode.Js))
 			}
 
 		}
@@ -97,6 +97,29 @@ func extractSystemTemplates(rootDir string, extractedDir string) ([]string, erro
 	})
 
 	return js, err
+}
+
+func buildJsFile(currentDir string, data []string) error {
+	//build extracted js file
+	file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
+	if err != nil {
+        return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
+	}
+	defer file.Close()
+
+	var sb strings.Builder
+
+	for _, j := range data {
+		sb.WriteString(j)
+		sb.WriteString("\n")
+	}
+
+	_, err = file.WriteString(sb.String())
+	if err != nil {
+        return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
+	}
+
+    return nil
 }
 
 func systemTemplates(
@@ -192,8 +215,8 @@ func ServeDev() {
 	}))
 
 	currentDir, _ := os.Getwd()
-    templatesDir := fmt.Sprintf("%s/templates", currentDir)
-    extractedDir := fmt.Sprintf("%s/extracted", currentDir)
+	templatesDir := fmt.Sprintf("%s/templates", currentDir)
+	extractedDir := fmt.Sprintf("%s/extracted", currentDir)
 	rootTemplates := template.New("")
 
 	//parse web component <template> files
@@ -202,29 +225,15 @@ func ServeDev() {
 		log.Fatal("couldn't parse web component templates: ", err)
 	}
 
-    //extract
-    js, err := extractSystemTemplates(templatesDir, "extracted")
+	//extract
+	js, err := extractSystemTemplates(templatesDir, "templates", "extracted")
 	if err != nil {
 		log.Fatal("couldn't extract templates: ", err)
 	}
 
-    //build extracted js file
-    file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
+    err = buildJsFile(currentDir, js)
     if err != nil {
-        log.Fatal("couldn't open extracted.js file: ", err)
-    }
-    defer file.Close()
-
-    var sb strings.Builder
-
-    for _,j := range js {
-        sb.WriteString(j)
-        sb.WriteString("\n")
-    }
-
-    _, err = file.WriteString(sb.String())
-    if err != nil {
-        log.Fatal("couldn't write to extracted.js", err)
+        log.Fatal(err)
     }
 
 	//parse regular templates
