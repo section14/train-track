@@ -18,43 +18,46 @@
 
     <div id='exercise-list-container' />
 
-    <script>
-        const addExerciseForm = document.getElementById("add-exercise-form")
-        const addExercise = (e) => {
-            e.preventDefault()
-            PostForm("/api/exercises", addExerciseForm).then((res) => {
-                //update list
-                swapContent("/api/partials/exercises", "exercise-list-container")
-            }).catch((err) => {
-                console.log("post err", err)
-            })
-        }
-
-        addExerciseForm.addEventListener("submit", addExercise)
-
-        const clickChange = (id) => {
-            //working below with document. Sooo, do you need to get the
-            //page element to dispatch event working. I though pushing it
-            //on to document would bubble to this div
-            const event = new CustomEvent('custom-page-event', {
-                detail: "hello",
-                bubbles: true,
-                cancelable: true,
-            })
-            document.dispatchEvent(event)
-
-            console.log("click id: ", id)
-        }
-
-
-        const dummyFunc = (e) => {
-            console.log("event: ", e.detail)
-        }
-
-        const page = document.getElementById("exercise-page")
-        document.addEventListener("custom-page-event", dummyFunc)
-
-        swapContent("/api/partials/exercises", "exercise-list-container")
-    </script>
 </div>
+
+<script>
+    const addExerciseForm = document.getElementById("add-exercise-form")
+
+    const addExercise = (e) => {
+        e.preventDefault()
+        const addExerciseForm = document.getElementById("add-exercise-form")
+        PostForm("/api/exercises", addExerciseForm).then((res) => {
+            //update list
+            swapContent("/api/partials/exercises", "exercise-list-container")
+        }).catch((err) => {
+            console.log("post err", err)
+        })
+    }
+
+    addExerciseForm.addEventListener("submit", addExercise)
+
+    const clickChange = (id) => {
+        //working below with document. Sooo, do you need to get the
+        //page element to dispatch event working. I though pushing it
+        //on to document would bubble to this div
+        const event = new CustomEvent('custom-page-event', {
+            detail: "hello",
+            bubbles: true,
+            cancelable: true,
+        })
+        document.dispatchEvent(event)
+
+        console.log("click id: ", id)
+    }
+
+
+    const dummyFunc = (e) => {
+        console.log("event: ", e.detail)
+    }
+
+    const page = document.getElementById("exercise-page")
+    document.addEventListener("custom-page-event", dummyFunc)
+
+    swapContent("/api/partials/exercises", "exercise-list-container")
+</script>
 {{ template "foot.html" .}}

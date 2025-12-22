@@ -49,9 +49,25 @@ func handlers(mux *chi.Mux, s *Server) {
 	mux.Mount("/api", apiMux)
 }
 
-func extractSystemTemplates(rootDir, targetDir, extractedDir string) ([]string, error) {
+type PagesJs struct {
+	Name string
+	Js   []string
+}
+
+func extractSystemTemplates(rootDir, targetDir, extractedDir string) (map[string]string, error) {
 	cleanRoot := filepath.Clean(rootDir)
-	js := make([]string, 0)
+	//js := make([]string, 0)
+	js := make(map[string]string)
+
+	/*
+
+	   Idea for importing JS:
+
+	   Extract every page and partial to it's own js file, which mirrors the same folder/file
+	   structure as templates. Then, supply a list to the ExecuteTemplate function in
+	   api/pages.go, which will update the <head> with the correct imports
+
+	*/
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -88,7 +104,13 @@ func extractSystemTemplates(rootDir, targetDir, extractedDir string) ([]string, 
 			}
 
 			if newNode.JsRemoved {
-				js = append(js, string(newNode.Js))
+				//build a new path for the js file
+				split := strings.Split(path, fmt.Sprintf("%s/%s", wd, "templates"))
+				trimmed := strings.TrimSuffix(split[1], ".html")
+				jsPath := fmt.Sprintf("%s%s%s%s", wd, "/static/js/extracted", trimmed, ".js")
+
+				//js = append(js, string(newNode.Js))
+				js[jsPath] = string(newNode.Js)
 			}
 
 		}
@@ -99,27 +121,65 @@ func extractSystemTemplates(rootDir, targetDir, extractedDir string) ([]string, 
 	return js, err
 }
 
-func buildJsFile(currentDir string, data []string) error {
+func buildJsFile(currentDir string, data map[string]string) error {
+	for jsFileName, jsFileData := range data {
+
+		//create new JS file (plus optional directory) and write to it
+		err := os.MkdirAll(filepath.Dir(jsFileName), 0770)
+		if err != nil {
+			return err
+		}
+
+		file, err := os.Create(jsFileName)
+		if err != nil {
+			return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
+		}
+		defer file.Close()
+
+		//var sb strings.Builder
+
+		//for _, j := range jsFileData {
+		//sb.WriteString(jsFileData)
+		//sb.WriteString("\n")
+		//}
+		_, err = file.WriteString(jsFileData)
+		if err != nil {
+			return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
+		}
+	}
+
 	//build extracted js file
-	file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
-	if err != nil {
-        return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
+	/*
+		file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
+		if err != nil {
+			return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
+		}
+		defer file.Close()
+
+		var sb strings.Builder
+
+		for _, j := range data {
+			sb.WriteString(j)
+			sb.WriteString("\n")
+		}
+
+		_, err = file.WriteString(sb.String())
+		if err != nil {
+			return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
+		}
+	*/
+
+	return nil
+}
+
+// todo: I think you're going to have to write forward "dummy" declarations like this
+func forwardFuncs() template.FuncMap {
+	return template.FuncMap{
+		"deleteClick": func(id int) template.HTMLAttr { return "" },
+		"editClick":   func(id int) template.HTMLAttr { return "" },
+		"editCancel":  func(id int) template.HTMLAttr { return "" },
+		"patchClick":  func(id int) template.HTMLAttr { return "" },
 	}
-	defer file.Close()
-
-	var sb strings.Builder
-
-	for _, j := range data {
-		sb.WriteString(j)
-		sb.WriteString("\n")
-	}
-
-	_, err = file.WriteString(sb.String())
-	if err != nil {
-        return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
-	}
-
-    return nil
 }
 
 func systemTemplates(
@@ -131,14 +191,7 @@ func systemTemplates(
 	pfx := len(cleanRoot) + 1
 	//root := template.New("")
 
-	//temp func test
-	//todo: I think you're going to have to write forward "dummy" declarations like this
-	root.Funcs(template.FuncMap{
-		"deleteClick": func(id int) template.HTMLAttr { return "" },
-		"editClick": func(id int) template.HTMLAttr { return "" },
-		"editCancel": func(id int) template.HTMLAttr { return "" },
-		"patchClick": func(id int) template.HTMLAttr { return "" },
-	})
+	root.Funcs(forwardFuncs())
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -174,6 +227,8 @@ func embeddedTemplates(
 	cleanRoot := filepath.Clean(rootDir)
 	//pfx := len(cleanRoot) + 1
 	//root := template.New("")
+
+	root.Funcs(forwardFuncs())
 
 	err := fs.WalkDir(files, cleanRoot, func(path string, d fs.DirEntry, e1 error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {
@@ -234,10 +289,10 @@ func ServeDev() {
 		log.Fatal("couldn't extract templates: ", err)
 	}
 
-    err = buildJsFile(currentDir, js)
-    if err != nil {
-        log.Fatal(err)
-    }
+	err = buildJsFile(currentDir, js)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	//parse regular templates
 	t, err := systemTemplates(wc, extractedDir, nil)

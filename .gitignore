@@ -1,4 +1,5 @@
 /bin
 /.data
 /extracted
+/static/js/extracted
 sculptor
