@@ -37,6 +37,16 @@ func (es *ExerciseService) Add(name string) error {
     return err
 }
 
+func (es *ExerciseService) Update(id int, name string) error {
+    e := model.Exercise {
+        ID: id,
+        Name: name,
+    }
+
+    err := es.service.UpdateExercise(e)
+    return err
+}
+
 func (es *ExerciseService) Delete(id int) error {
     err := es.service.DeleteExercise(id)
     return err

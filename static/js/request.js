@@ -27,9 +27,23 @@ const Get = (url) => {
     })
 }
 
+const PatchForm = (url, id, data) => {
+    return new Promise((resolve, reject) => {
+        fetch(`${url}/${id}`, { method: "PATCH", body: new FormData(data) }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error POST'ing: ${response.status}`)
+            }
+
+            return resolve(response.text())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
 const PostForm = (url, data) => {
     return new Promise((resolve, reject) => {
-        fetch(url, { method: "post", body: new FormData(data) }).then((response) => {
+        fetch(url, { method: "POST", body: new FormData(data) }).then((response) => {
             if (!response.ok) {
                 throw new Error(`Error POST'ing: ${response.status}`)
             }
@@ -43,7 +57,7 @@ const PostForm = (url, data) => {
 
 const Delete = (url) => {
     return new Promise((resolve, reject) => {
-        fetch(url, {method: "delete"}).then((response) => {
+        fetch(url, {method: "DELETE"}).then((response) => {
             if (!response.ok) {
                 throw new Error(`Error deleting: ${response.status}`)
             }

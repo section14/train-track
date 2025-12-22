@@ -16,63 +16,97 @@ type WidgetPage struct {
 */
 
 func partialsRoutes(serveMux *chi.Mux, s *Server) {
-    mux := chi.NewRouter()
+	mux := chi.NewRouter()
 
-    mux.Get("/exercises", s.partialExercises)
-    mux.Post("/exercises", s.addExercise)
+	mux.Get("/exercises", s.partialExercises)
 
-    serveMux.Mount("/partials", mux)
+	serveMux.Mount("/partials", mux)
 }
 
-//todo: break this out
+// todo: break this out
 func postRoutes(serveMux *chi.Mux, s *Server) {
-    serveMux.Post("/exercises", s.addExercise)
-    serveMux.Delete("/exercises/{id}", s.deleteExercise)
+	serveMux.Post("/exercises", s.addExercise)
+	serveMux.Patch("/exercises/{id}", s.patchExercise)
+	serveMux.Delete("/exercises/{id}", s.deleteExercise)
 }
 
 func DeleteClick(id int) string {
-   return fmt.Sprintf("onclick=\"deleteTheExercise(%d)\"", id)
+	return fmt.Sprintf("onclick=\"deleteExercise(%d)\"", id)
+}
+
+func EditClick(id int) string {
+	return fmt.Sprintf("onclick=\"editExercise(%d)\"", id)
+}
+
+func EditCancel(id int) string {
+	return fmt.Sprintf("onclick=\"editExerciseCancel(%d)\"", id)
+}
+
+func PatchClick(id int) string {
+	return fmt.Sprintf("onclick=\"patchListener(%d)\"", id)
 }
 
 func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
-    e := s.exercise.GetAll()
+	e := s.exercise.GetAll()
 
-    funcMap := template.FuncMap{
-        "clicker": func(id int) template.HTMLAttr { return template.HTMLAttr(DeleteClick(id))},
-    }
+	funcMap := template.FuncMap{
+		"deleteClick": func(id int) template.HTMLAttr { return template.HTMLAttr(DeleteClick(id)) },
+		"editClick":   func(id int) template.HTMLAttr { return template.HTMLAttr(EditClick(id)) },
+		"editCancel":  func(id int) template.HTMLAttr { return template.HTMLAttr(EditCancel(id)) },
+		"patchClick":  func(id int) template.HTMLAttr { return template.HTMLAttr(PatchClick(id)) },
+	}
 
-    err :=  s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/exercise-list.html", e)
-    if err != nil {
-        fmt.Println("couldn't open exercise list partial", err)
-    }
+	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/exercise-list.html", e)
+	if err != nil {
+		fmt.Println("couldn't open exercise list partial", err)
+	}
 }
 
 func (s *Server) addExercise(w http.ResponseWriter, r *http.Request) {
-    name := r.FormValue("name")
-    err := s.exercise.Add(name)
+	name := r.FormValue("name")
+	err := s.exercise.Add(name)
 
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-    } else {
-        w.WriteHeader(http.StatusOK)
-    }
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
-func (s *Server) deleteExercise(w http.ResponseWriter, r *http.Request) {
-    idStr := r.PathValue("id")
+func (s *Server) patchExercise(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-    err = s.exercise.Delete(int(id))
 
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-    } else {
-        w.WriteHeader(http.StatusOK)
-    }
+	name := r.FormValue("name")
+	err = s.exercise.Update(int(id), name)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }
+
+func (s *Server) deleteExercise(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	err = s.exercise.Delete(int(id))
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 /*
 func (s *Server) partialsWidgets(w http.ResponseWriter, r *http.Request) {
     idStr := r.PathValue("id")

@@ -1,11 +1,7 @@
         const addExerciseForm = document.getElementById("add-exercise-form")
         const addExercise = (e) => {
             e.preventDefault()
-            //const data = new FormData(e.target)
-            //console.log("e: ", ...data.entries())
-            //console.log(e.target.name)
             PostForm("/api/exercises", addExerciseForm).then((res) => {
-                console.log("res: ", res)
                 //update list
                 swapContent("/api/partials/exercises", "exercise-list-container")
             }).catch((err) => {
@@ -27,17 +23,8 @@
             document.dispatchEvent(event)
 
             console.log("click id: ", id)
-            //swapContent("/api/partials/widgets/b", "widget-list-container")
         }
 
-        const deleteExercise = (id) => {
-            console.log("id: ", id)
-            Delete(`/api/exercises/${id}`).then((res) => {
-                console.log("delete ok: ", res)
-            }).catch((err) => {
-                console.log("delete err: ", err)
-            })
-        }
 
         const dummyFunc = (e) => {
             console.log("event: ", e.detail)
@@ -48,15 +35,66 @@
 
         swapContent("/api/partials/exercises", "exercise-list-container")
 
-    const deleteTheExercise = (id) => {
-        console.log("id of delettion: ", id)
-        /*
+    const deleteExercise = (id) => {
         Delete(`/api/exercises/${id}`).then((res) => {
-            console.log("delete ok: ", res)
+            swapContent("/api/partials/exercises", "exercise-list-container")
         }).catch((err) => {
             console.log("delete err: ", err)
         })
-        */
-    alert("omg")
     }
+
+    const editExercise = (id) => {
+        const itemRow = document.getElementById(`item-row-${id}`)
+        const itemName = document.getElementById(`item-name-${id}`)
+        const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
+        const itemButtons = document.getElementById(`item-buttons-${id}`)
+        const itemEditButtons = document.getElementById(`item-edit-buttons-${id}`)
+
+        itemRow.classList.add("highlighted")
+
+        itemName.classList.remove("show")
+        itemName.classList.add("hide")
+
+        itemNameEdit.classList.remove("hide")
+        itemNameEdit.classList.add("show")
+
+        itemButtons.classList.remove("show")
+        itemButtons.classList.add("hide")
+
+        itemEditButtons.classList.remove("hide")
+        itemEditButtons.classList.add("show")
+    }
+
+    const editExerciseCancel = (id) => {
+        const itemRow = document.getElementById(`item-row-${id}`)
+        const itemName = document.getElementById(`item-name-${id}`)
+        const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
+        const itemButtons = document.getElementById(`item-buttons-${id}`)
+        const itemEditButtons = document.getElementById(`item-edit-buttons-${id}`)
+
+        itemRow.classList.remove("highlighted")
+
+        itemName.classList.remove("hide")
+        itemName.classList.add("show")
+
+        itemNameEdit.classList.remove("show")
+        itemNameEdit.classList.add("hide")
+
+        itemButtons.classList.remove("hide")
+        itemButtons.classList.add("show")
+
+        itemEditButtons.classList.remove("show")
+        itemEditButtons.classList.add("hide")
+    }
+
+    const patchListener = (id) => {
+        const editExerciseForm = document.getElementById(`edit-exercise-form-${id}`)
+        PatchForm("/api/exercises", id, editExerciseForm).then((res) => {
+            //update list
+            swapContent("/api/partials/exercises", "exercise-list-container")
+        }).catch((err) => {
+            console.log("post err", err)
+        })
+    }
+
 

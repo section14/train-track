@@ -8,8 +8,8 @@
 }
 
 body {
-    background-color: var(--med-100);
-    color: var(--dark);
+    background-color: var(--dark);
+    color: var(--med-light);
     margin: 0;
     padding: 0;
 }
@@ -31,31 +31,32 @@ form-input::part(input-field) {
     background-color: var(--light);
     padding: 0.25rem 0.5rem;
     line-height: 1.5;
-    border: 2px solid var(--dark-300);
+    border: 2px solid var(--dark);
     border-radius: 0.25rem;
 }
 
 form-input::part(input-field):focus {
     outline: none;
-    border-color: var(--dark-400);
+    border-color: var(--dark);
     background-color: oklch(from var(--light) l calc(c + 0.04) h);
 }
 
 form-input::part(input-field)::placeholder {
-    color: oklch(from var(--primary) calc(l + 0.08) c h);
+    /*color: oklch(from var(--primary) calc(l + 0.08) c h);*/
+    color: oklch(from var(--med) calc(l + 0.08) c h);
 }
 
 input {
     background-color: var(--light);
     padding: 0.25rem 0.5rem;
     line-height: 1.5;
-    border: 2px solid var(--dark-300);
+    border: 2px solid var(--dark);
     border-radius: 0.25rem;
 }
 
 input:focus {
     outline: none;
-    border-color: var(--dark-400);
+    border-color: var(--dark);
     background-color: oklch(from var(--light) l calc(c + 0.04) h);
 }
 
@@ -89,6 +90,7 @@ button:hover {
 
 /* end element styles */
 
+/* buttons --------------------------------------------- */
 .btn-secondary {
     background-color: var(--secondary);
 }
@@ -98,20 +100,29 @@ button:hover {
 }
 
 .btn-save {
-    background-color: var(--secondary);
+    background-color: var(--primary);
 }
 
 .btn-save:hover {
-    background-color: oklch(from var(--secondary) calc(l - 0.08) c h);
+    background-color: oklch(from var(--primary) calc(l - 0.08) c h);
 }
 
 .btn-delete {
-    color: var(--secondary);
+    color: var(--med-light);
     background-color: var(--dark);
 }
 
 .btn-delete:hover {
     background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+}
+
+.btn-edit {
+    color: var(--dark);
+    background-color: var(--med);
+}
+
+.btn-edit:hover {
+    background-color: oklch(from var(--med) calc(l + 0.08) c h);
 }
 
 .layout {
@@ -128,14 +139,83 @@ button:hover {
     width: 50px;
 }
 
+/* pages --------------------------------------------- */
+
 .page-home {
-    background-color: #e6e6e6;
+    background-color: var(--light);
 }
 
 .page-exercises {
-    background-color: var(--med-200);
+    background-color: var(--dark);
 }
 
+/* widgets --------------------------------------------- */
+
+.exercise-list {
+    ul li {
+        display: flex;
+        align-items: center;
+        margin: var(--spacing-2) auto;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &.highlighted {
+            /*background-color: oklch(from var(--light) l c h / 0.25);*/
+        }
+    }
+
+    & .item-name {
+        flex: 1 0 auto;
+        color: var(--dark);
+
+        &.show {
+            display: block;
+        }
+
+        &.hide {
+            display: none;
+        }
+    }
+
+    & .item-name-edit {
+        flex: 1 0 auto;
+
+        &.show {
+            background-color: oklch(from var(--light) l c h / 0.25);
+            display: block;
+        }
+
+        &.hide {
+            display: none;
+        }
+    }
+
+    & .item-buttons.show {
+        display: block;
+        flex: 0 1 auto;
+    }
+
+    & .item-buttons.hide {
+        display: none;
+        flex: 0 1 auto;
+    }
+
+    & .item-edit-buttons.show {
+        display: block;
+        flex: 0 1 auto;
+    }
+
+    & .item-edit-buttons.hide {
+        display: none;
+        flex: 0 1 auto;
+    }
+}
 
 /* Turn cross-document view-transitions on */
 /* Note that this at-rule is all that is needed to create the default cross-fade animation  */

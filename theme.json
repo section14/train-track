@@ -1,11 +1,11 @@
 {
     "theme": [
-        {"color": {"primary": "#63A361"}, "generateShades": true},
-        {"color": {"secondary": "#FFC50F"}, "generateShades": true},
-        {"color": {"info": "#00D1D8"}, "generateShades": true},
-        {"color": {"light": "#FDE7B3"}, "generateShades": false},
-        {"color": {"med": "#5B532C"}, "generateShades": true},
-        {"color": {"dark": "#2E2E2E"}, "generateShades": false}
+        {"color": {"primary": "#00AAD4"}, "generateShades": true},
+        {"color": {"secondary": "#F56A00"}, "generateShades": true},
+        {"color": {"light": "#FFFFFF"}, "generateShades": false},
+        {"color": {"med-light": "#D0D0D0"}, "generateShades": false},
+        {"color": {"med": "#959595"}, "generateShades": true},
+        {"color": {"dark": "#303030"}, "generateShades": false}
     ],
     "shades": [
         "100",

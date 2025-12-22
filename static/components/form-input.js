@@ -10,7 +10,6 @@ class FormInput extends HTMLElement {
         this.internals = this.attachInternals();
 
         let template = document.getElementById("form-input-template");
-        console.log("template: ", template);
         let templateContent = template.content;
 
         const shadowRoot = this.attachShadow({ mode: "open" });
@@ -38,13 +37,11 @@ class FormInput extends HTMLElement {
     }
 
     connectedCallback() {
-        console.log("I've been a connect");
         //input
         this.inputField = this.shadowRoot.querySelector("input");
         this.inputField.name = this.dataObject.name;
         this.inputField.placeholder = this.dataObject.placeholder;
 
-        //this.inputField.value = this.dataObject.value;
         this.internals.setFormValue(this.dataObject.value);
 
         //listen for changes

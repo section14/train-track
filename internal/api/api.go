@@ -134,7 +134,10 @@ func systemTemplates(
 	//temp func test
 	//todo: I think you're going to have to write forward "dummy" declarations like this
 	root.Funcs(template.FuncMap{
-		"clicker": func(id int) template.HTMLAttr { return "" },
+		"deleteClick": func(id int) template.HTMLAttr { return "" },
+		"editClick": func(id int) template.HTMLAttr { return "" },
+		"editCancel": func(id int) template.HTMLAttr { return "" },
+		"patchClick": func(id int) template.HTMLAttr { return "" },
 	})
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {

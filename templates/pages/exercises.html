@@ -5,9 +5,6 @@
     <div>
         You are at exercises
     </div>
-    <img src="/static/images/image02.jpg" />
-
-    <button type="button" onclick="clickChange('abra')">Change em</button>
 
     <h2>Add New Exercise</h2>
     <form id="add-exercise-form">
@@ -21,16 +18,11 @@
 
     <div id='exercise-list-container' />
 
-
     <script>
         const addExerciseForm = document.getElementById("add-exercise-form")
         const addExercise = (e) => {
             e.preventDefault()
-            //const data = new FormData(e.target)
-            //console.log("e: ", ...data.entries())
-            //console.log(e.target.name)
             PostForm("/api/exercises", addExerciseForm).then((res) => {
-                console.log("res: ", res)
                 //update list
                 swapContent("/api/partials/exercises", "exercise-list-container")
             }).catch((err) => {
@@ -52,17 +44,8 @@
             document.dispatchEvent(event)
 
             console.log("click id: ", id)
-            //swapContent("/api/partials/widgets/b", "widget-list-container")
         }
 
-        const deleteExercise = (id) => {
-            console.log("id: ", id)
-            Delete(`/api/exercises/${id}`).then((res) => {
-                console.log("delete ok: ", res)
-            }).catch((err) => {
-                console.log("delete err: ", err)
-            })
-        }
 
         const dummyFunc = (e) => {
             console.log("event: ", e.detail)

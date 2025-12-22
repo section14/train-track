@@ -1,26 +1,99 @@
-<div id="widget-list" class="bg-primary-100 p-3">
+<div id="widget-list" class="exercise-list bg-med p-3">
     <ul>
         {{range .}}
-        <li>
-            {{.Name}}
-            <button id="ex-{{.ID}}" type="button" {{clicker .ID}} class="btn-delete ms-3">
-                Delete
-            </button>
+        <li id="item-row-{{.ID}}">
+            <div id="item-name-{{.ID}}" class="item-name show">
+                {{.Name}}
+            </div>
+            <div id="item-name-edit-{{.ID}}" class="item-name-edit hide">
+                <form id="edit-exercise-form-{{.ID}}">
+                    <input name="name" type="text" value="{{.Name}}" />
+                </form>
+            </div>
+            <div id="item-buttons-{{.ID}}" class="item-buttons show">
+                <button id="ex-{{.ID}}" type="button" {{editClick .ID}} class="btn-edit ms-3">
+                    Edit
+                </button>
+                <button id="ex-{{.ID}}" type="button" {{deleteClick .ID}} class="btn-delete ms-3">
+                    Delete
+                </button>
+            </div>
+
+            <div id="item-edit-buttons-{{.ID}}" class="item-edit-buttons hide">
+                <button id="edit-cancel-{{.ID}}" type="button" {{editCancel .ID}} class="btn-edit ms-3">
+                    Cancel
+                </button>
+                <button type="button" class="btn-save" {{patchClick .ID}}>
+                    Save
+                </button>
+            </div>
+
         </li>
         {{end}}
     </ul>
 </div>
 
 <script>
-    const deleteTheExercise = (id) => {
-        console.log("id of delettion: ", id)
-        /*
+    const deleteExercise = (id) => {
         Delete(`/api/exercises/${id}`).then((res) => {
-            console.log("delete ok: ", res)
+            swapContent("/api/partials/exercises", "exercise-list-container")
         }).catch((err) => {
             console.log("delete err: ", err)
         })
-        */
-    alert("omg")
     }
+
+    const editExercise = (id) => {
+        const itemRow = document.getElementById(`item-row-${id}`)
+        const itemName = document.getElementById(`item-name-${id}`)
+        const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
+        const itemButtons = document.getElementById(`item-buttons-${id}`)
+        const itemEditButtons = document.getElementById(`item-edit-buttons-${id}`)
+
+        itemRow.classList.add("highlighted")
+
+        itemName.classList.remove("show")
+        itemName.classList.add("hide")
+
+        itemNameEdit.classList.remove("hide")
+        itemNameEdit.classList.add("show")
+
+        itemButtons.classList.remove("show")
+        itemButtons.classList.add("hide")
+
+        itemEditButtons.classList.remove("hide")
+        itemEditButtons.classList.add("show")
+    }
+
+    const editExerciseCancel = (id) => {
+        const itemRow = document.getElementById(`item-row-${id}`)
+        const itemName = document.getElementById(`item-name-${id}`)
+        const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
+        const itemButtons = document.getElementById(`item-buttons-${id}`)
+        const itemEditButtons = document.getElementById(`item-edit-buttons-${id}`)
+
+        itemRow.classList.remove("highlighted")
+
+        itemName.classList.remove("hide")
+        itemName.classList.add("show")
+
+        itemNameEdit.classList.remove("show")
+        itemNameEdit.classList.add("hide")
+
+        itemButtons.classList.remove("hide")
+        itemButtons.classList.add("show")
+
+        itemEditButtons.classList.remove("show")
+        itemEditButtons.classList.add("hide")
+    }
+
+    const patchListener = (id) => {
+        const editExerciseForm = document.getElementById(`edit-exercise-form-${id}`)
+        PatchForm("/api/exercises", id, editExerciseForm).then((res) => {
+            //update list
+            swapContent("/api/partials/exercises", "exercise-list-container")
+        }).catch((err) => {
+            console.log("post err", err)
+        })
+    }
+
 </script>
