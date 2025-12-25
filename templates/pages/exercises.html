@@ -16,9 +16,10 @@
         </div>
     </form>
 
-    <div id='exercise-list-container' />
+    <div id="exercise-list-container" />
 
 </div>
+{{ template "foot.html" .}}
 
 <script>
     const addExerciseForm = document.getElementById("add-exercise-form")
@@ -60,4 +61,3 @@
 
     swapContent("/api/partials/exercises", "exercise-list-container")
 </script>
-{{ template "foot.html" .}}

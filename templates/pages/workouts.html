@@ -1,0 +1,15 @@
+{{ template "head.html" .}}
+{{ template "nav.html" .}}
+{{ template "form-input.html" }}
+
+<div class="page-workouts">
+    Workouts
+
+    <button type="button">Add New Workout</button>
+    <div id="workout-list-container" />
+</div>
+{{ template "foot.html" .}}
+
+<script>
+    swapContent("/api/partials/workouts", "workout-list-container")
+</script>

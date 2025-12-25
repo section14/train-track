@@ -175,6 +175,7 @@ func buildJsFile(currentDir string, data map[string]string) error {
 // todo: I think you're going to have to write forward "dummy" declarations like this
 func forwardFuncs() template.FuncMap {
 	return template.FuncMap{
+		"addClick":    func(id int) template.HTMLAttr { return "" },
 		"deleteClick": func(id int) template.HTMLAttr { return "" },
 		"editClick":   func(id int) template.HTMLAttr { return "" },
 		"editCancel":  func(id int) template.HTMLAttr { return "" },

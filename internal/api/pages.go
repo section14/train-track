@@ -15,6 +15,7 @@ type HeadImports struct {
 func pageRoutes(serveMux *chi.Mux, s *Server) {
 	serveMux.Get("/", s.homePage)
 	serveMux.Get("/exercises", s.exercisePage)
+	serveMux.Get("/workouts", s.workoutPage)
 }
 
 func appendPath(p string) string {
@@ -46,5 +47,19 @@ func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
 	err := s.tpls.ExecuteTemplate(w, "pages/exercises.html", head)
 	if err != nil {
 		fmt.Println("couldn't open widgets", err)
+	}
+}
+
+func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
+	head := HeadImports{
+		Title: "Workouts",
+		Js:    []string{
+            appendPath("/pages/workouts.js"),
+        },
+	}
+
+	err := s.tpls.ExecuteTemplate(w, "pages/workouts.html", head)
+	if err != nil {
+		fmt.Println("couldn't open workouts", err)
 	}
 }

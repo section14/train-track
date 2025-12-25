@@ -25,7 +25,34 @@ ul li {
     padding: 0;
 }
 
-/* shadow dom */
+/* nav -------------------------------------------------- */
+
+.nav {
+    cursor: pointer;
+
+    & ul {
+        & li {
+            display: inline-block;
+            gap: var(--spacing-2);
+        }
+    }
+
+    button {
+        color: var(--light);
+        background-color: var(--dark);
+        border-radius: 0;
+
+        &:hover {
+            color: oklch(from var(--light) calc(l - 0.14) c h);
+            background-color: oklch(from var(--med) l c h / 0.25);
+        }
+    }
+}
+
+/* end nav ---------------------------------------------- */
+
+/* shadow dom ------------------------------------------- */
+
 form-input::part(input-field) {
     font-size: inherit;
     background-color: var(--light);
@@ -45,6 +72,8 @@ form-input::part(input-field)::placeholder {
     /*color: oklch(from var(--primary) calc(l + 0.08) c h);*/
     color: oklch(from var(--med) calc(l + 0.08) c h);
 }
+
+/* end shadow dom -------------------------------------- */
 
 input {
     background-color: var(--light);
@@ -146,6 +175,10 @@ button:hover {
 }
 
 .page-exercises {
+    background-color: var(--dark);
+}
+
+.page-workouts {
     background-color: var(--dark);
 }
 

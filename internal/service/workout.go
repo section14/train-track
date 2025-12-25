@@ -8,8 +8,8 @@ import (
 
 type WorkoutManager interface {
 	GetWorkouts() []model.Workout
-	GetWorkout(id int) model.Workout
-	AddWorkout(e model.Workout) error
+	GetWorkout(id int) []model.Movement
+	AddWorkout() error
 	UpdateWorkout(e model.Workout) error
 	DeleteWorkout(id int) error
 }
@@ -22,7 +22,8 @@ func NewWorkoutService(service WorkoutManager) *WorkoutService {
 	return &WorkoutService{service: service}
 }
 
-func (ws *WorkoutService) GetAll() {
+func (ws *WorkoutService) GetAll() []model.Workout {
     workouts := ws.service.GetWorkouts()
     fmt.Println("workouts", workouts)
+    return workouts
 }
