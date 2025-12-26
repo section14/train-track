@@ -48,7 +48,7 @@ func (ws *WorkoutStore) GetWorkouts() []model.Workout {
 
 		if err != nil {
 			if err == rows.Err() {
-				fmt.Println("error scanning GetWorks: ", err)
+				fmt.Println("error scanning GetWorkouts: ", err)
 			}
 		}
 
@@ -157,10 +157,42 @@ func (ws *WorkoutStore) AddWorkout() error {
 	return nil
 }
 
-func (ws *WorkoutStore) UpdateWorkout(e model.Workout) error {
-	return nil
+func (ws *WorkoutStore) UpdateWorkout(e model.Workout) ([]model.Movement, error) {
+    var movements []model.Movement
+	return movements, nil
 }
 
 func (ws *WorkoutStore) DeleteWorkout(id int) error {
 	return nil
+}
+
+
+func (ws *WorkoutStore) AddMovement() error {
+    return nil
+}
+
+func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, error) {
+    var movements []model.Movement
+
+    // update a movement
+    updateQ := `
+        UPDATE movement
+        SET exercise_id=?, sets=?, reps=?
+        WHERE id=?
+    `
+
+    updateStmt, err := ws.env.Db.Prepare(updateQ)
+    if err != nil {
+        return movements, err
+    }
+
+    _, err = updateStmt.Exec(m.ExerciseID, m.Sets, m.Reps, m.ID)
+    if err != nil {
+        return movements, err
+    }
+
+    // return updated movements for a workout
+    moves := ws.GetWorkout(m.ID)
+
+    return moves, nil
 }

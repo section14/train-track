@@ -41,11 +41,11 @@ export const GetJson = (url) => {
     })
 }
 
-export const PatchForm = (url, id, data) => {
+export const Patch = (url, id, data) => {
     return new Promise((resolve, reject) => {
-        fetch(`${url}/${id}`, { method: "PATCH", body: new FormData(data) }).then((response) => {
+        fetch(`${url}/${id}`, { method: "PATCH", body: JSON.stringify(data) }).then((response) => {
             if (!response.ok) {
-                throw new Error(`Error POST'ing: ${response.status}`)
+                throw new Error(`Error PATCH'ing: ${response.status}`)
             }
 
             return resolve(response.text())
@@ -55,9 +55,24 @@ export const PatchForm = (url, id, data) => {
     })
 }
 
-export const Post = (url) => {
+export const PatchForm = (url, id, data) => {
+    console.log("data: ", data)
     return new Promise((resolve, reject) => {
-        fetch(url, { method: "POST" }).then((response) => {
+        fetch(`${url}/${id}`, { method: "PATCH", body: new FormData(data) }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error PATCH'ing: ${response.status}`)
+            }
+
+            return resolve(response.text())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export const Post = (url, data) => {
+    return new Promise((resolve, reject) => {
+        fetch(url, { method: "POST", body: JSON.stringify(data) }).then((response) => {
             if (!response.ok) {
                 throw new Error(`Error POST'ing: ${response.status}`)
             }

@@ -8,3 +8,28 @@
 ></workout-movement>
 {{end}}
 
+<script>
+    import { Patch } from '/static/js/request.js'
+    import { swapContent } from '/static/js/swap.js'
+
+    const workoutMovements = {}
+
+    const updateWorkout = (e) => {
+        console.log("updated: ", e.detail);
+        const w = e.detail;
+        workoutMovements[w["id"]] = w;
+
+        Patch(`/api/workouts/${w["workoutId"]}`, w["id"], w).then((res) => {
+            //swapContent(
+            //"/api/partials/workouts",
+            //"workout-list-container",
+            //() => swapContent("/api/partials/workouts/last", "selected-workout"))
+           swapContent("/api/partials/workouts/last", "selected-workout")
+        }).catch((err) => {
+            console.log("error patching movement", err);
+        })
+    }
+
+    document.addEventListener("update-workout", updateWorkout);
+</script>
+

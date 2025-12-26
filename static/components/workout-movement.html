@@ -1,8 +1,18 @@
 <template id="workout-movement-template">
     <style>
+        :host {
+            flex: 1;
+        }
+
         .container {
-            border: 1px solid var(--light);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
             padding: var(--spacing-2);
+
+            * {
+                flex: 1;
+            }
         }
 
         button {
@@ -22,12 +32,22 @@
             cursor: pointer;
             background-color: oklch(from var(--primary) calc(l - 0.08) c h);
         }
+
+        .btn-delete {
+            color: var(--med-light);
+            background-color: var(--dark);
+        }
+
+        .btn-delete:hover {
+            background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+        }
     </style>
 
     <form id="movement-form" class="container">
-        <select-exercise id="exercise"></select-exercise>
+        <select-exercise id="exercise" name="exercise"></select-exercise>
         <form-input id="sets" name="sets" type="number" placeholder="Enter Sets"></form-input>
         <form-input id="reps" name="reps" type="number" placeholder="Enter Reps"></form-input>
         <button type="submit">Save</button>
+        <button type="button" class="btn-delete">Delete</button>
     </form>
 </template>

@@ -1,5 +1,3 @@
-import { PatchForm } from '/static/js/request.js'
-
 class WorkoutMovement extends HTMLElement {
     constructor() {
         super();
@@ -25,8 +23,29 @@ class WorkoutMovement extends HTMLElement {
     reps;
 
     submitForm = (e) => {
-        e.preventDefault()
-        console.log("submit e: ", new FormData(this.movementForm))
+        if (!e) return
+        if (e) e.preventDefault();
+        const formData = new FormData(this.movementForm);
+
+        let entries = {};
+        for (var [key, value] of formData.entries()) {
+            entries[key] = value;
+        }
+
+        const mObj = {
+            id: parseInt(this.dataObject.id),
+            workoutId: parseInt(this.dataObject.workoutId),
+            exerciseId: parseInt(entries["exercise"]),
+            sets: parseInt(entries["sets"]),
+            reps: parseInt(entries["reps"]),
+        }
+
+        const event = new CustomEvent('update-workout', {
+            detail: mObj,
+            bubbles: true,
+            cancelable: true,
+        })
+        document.dispatchEvent(event)
     }
 
     connectedCallback() {
@@ -42,6 +61,9 @@ class WorkoutMovement extends HTMLElement {
         this.exercise.setAttribute("value", this.dataObject.exerciseId)
         this.sets.setAttribute("value", this.dataObject.sets)
         this.reps.setAttribute("value", this.dataObject.reps)
+
+        //register current data with parent
+        this.submitForm(null)
     }
 
     disconnectedCallback() {

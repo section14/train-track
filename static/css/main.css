@@ -157,7 +157,6 @@ button:hover {
 
 .layout {
     padding: 1.0rem;
-    height: 500px;
 }
 
 .boxes {
@@ -255,6 +254,28 @@ button:hover {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-3);
+
+    ul {
+        li {
+            padding: var(--spacing-2);
+            border: 1px solid var(--med-light);
+            border-radius: var(--round-md);
+            margin-bottom: var(--spacing-6);
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--med-light);
+        margin-bottom: var(--spacing-2);
+        padding-bottom: var(--spacing-2);
+    }
 }
 
 /* Turn cross-document view-transitions on */
