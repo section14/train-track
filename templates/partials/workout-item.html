@@ -6,5 +6,18 @@
     sets="{{.Sets}}"
     reps="{{.Reps}}"
 ></workout-movement>
+<button type="button">Get All</button>
 {{end}}
+
+<script>
+    const workoutMovements = {}
+
+    const updateWorkout = (e) => {
+        console.log("updated: ", e.detail)
+        const w = e.detail
+        workoutMovements[w["id"]] = w
+    }
+
+    document.addEventListener("update-workout", updateWorkout)
+</script>
 
