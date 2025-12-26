@@ -20,34 +20,26 @@ func partialsRoutes(serveMux *chi.Mux, s *Server) {
 
 	mux.Get("/exercises", s.partialExercises)
 	mux.Get("/workouts", s.partialWorkouts)
+	mux.Get("/workouts/last", s.partialLastWorkout)
 
 	serveMux.Mount("/partials", mux)
 }
 
 // todo: break this out
 func postRoutes(serveMux *chi.Mux, s *Server) {
+	serveMux.Get("/json/exercises", s.exerciseJson)
 	serveMux.Post("/exercises", s.addExercise)
 	serveMux.Patch("/exercises/{id}", s.patchExercise)
 	serveMux.Delete("/exercises/{id}", s.deleteExercise)
+
+	serveMux.Post("/workouts", s.addWorkout)
 }
 
-func AddEmptyClick(name string) string {
+func NameClick(name string) string {
 	return fmt.Sprintf("onclick=\"%s()\"", name)
 }
 
-func DeleteClick(name string, id int) string {
-	return fmt.Sprintf("onclick=\"%s(%d)\"", name, id)
-}
-
-func EditClick(name string, id int) string {
-	return fmt.Sprintf("onclick=\"%s(%d)\"", name, id)
-}
-
-func EditCancel(name string, id int) string {
-	return fmt.Sprintf("onclick=\"%s(%d)\"", name, id)
-}
-
-func PatchClick(name string, id int) string {
+func NameIdClick(name string, id int) string {
 	return fmt.Sprintf("onclick=\"%s(%d)\"", name, id)
 }
 
@@ -56,16 +48,16 @@ func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
 
 	funcMap := template.FuncMap{
 		"deleteClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(DeleteClick("deleteExercise", id))
+			return template.HTMLAttr(NameIdClick("deleteExercise", id))
 		},
 		"editClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(EditClick("editExercise", id))
+			return template.HTMLAttr(NameIdClick("editExercise", id))
 		},
 		"editCancel": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(EditCancel("editExerciseCancel", id))
+			return template.HTMLAttr(NameIdClick("editExerciseCancel", id))
 		},
 		"patchClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(PatchClick("patchListener", id))
+			return template.HTMLAttr(NameIdClick("patchListener", id))
 		},
 	}
 
@@ -73,6 +65,11 @@ func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
 	}
+}
+
+func (s *Server) exerciseJson(w http.ResponseWriter, r *http.Request) {
+    e := s.exercise.GetAllJson()
+    w.Write(e)
 }
 
 func (s *Server) addExercise(w http.ResponseWriter, r *http.Request) {
@@ -123,14 +120,39 @@ func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 	wo := s.workout.GetAll()
 
 	funcMap := template.FuncMap{
-		"addClick": func() template.HTMLAttr {
-            return template.HTMLAttr(AddEmptyClick("addWorkout"))
+		"editClick": func() template.HTMLAttr {
+            return template.HTMLAttr(NameClick("editWorkout"))
         },
 	}
 
 	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
+	}
+}
+
+func (s *Server) partialLastWorkout(w http.ResponseWriter, r *http.Request) {
+    wo := s.workout.GetLast()
+
+	funcMap := template.FuncMap{
+		"editClick": func() template.HTMLAttr {
+            return template.HTMLAttr(NameClick("editWorkout"))
+        },
+	}
+
+	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/workout-item.html", wo)
+	if err != nil {
+		fmt.Println("couldn't open exercise list partial", err)
+	}
+}
+
+func (s *Server) addWorkout(w http.ResponseWriter, r *http.Request) {
+    err := s.workout.Add()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
 }
 

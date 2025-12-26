@@ -16,12 +16,15 @@
         </div>
     </form>
 
-    <div id="exercise-list-container" />
+    <div id="exercise-list-container"></div>
 
 </div>
 {{ template "foot.html" .}}
 
 <script>
+    import { PostForm } from '/static/js/request.js'
+    import { swapContent } from '/static/js/swap.js'
+
     const addExerciseForm = document.getElementById("add-exercise-form")
 
     const addExercise = (e) => {

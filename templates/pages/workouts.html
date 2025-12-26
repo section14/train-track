@@ -1,15 +1,32 @@
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
 {{ template "form-input.html" }}
+{{ template "select-exercise.html"}}
+{{ template "workout-movement.html"}}
 
 <div class="page-workouts">
     Workouts
 
-    <button type="button">Add New Workout</button>
-    <div id="workout-list-container" />
+    <button type="button" {{addClick}}>Add New Workout</button>
+    <div id="workout-list-container"></div>
 </div>
 {{ template "foot.html" .}}
 
 <script>
-    swapContent("/api/partials/workouts", "workout-list-container")
+    import { Post } from '/static/js/request.js'
+    import { swapContent } from '/static/js/swap.js'
+
+    const addWorkout = () => {
+        Post("/api/workouts").then((res) => {
+            //update list
+            swapContent("/api/partials/workouts", "workout-list-container")
+        }).catch((err) => {
+            console.log("post err", err)
+        })
+    }
+
+    swapContent(
+        "/api/partials/workouts",
+        "workout-list-container",
+        () => swapContent("/api/partials/workouts/last", "selected-workout"))
 </script>

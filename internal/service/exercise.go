@@ -3,6 +3,8 @@ package service
 import (
 	//"fmt"
 
+	"encoding/json"
+
 	"github.com/section14/train-track/internal/model"
 )
 
@@ -25,6 +27,17 @@ func NewExerciseService(service ExerciseManager) *ExerciseService {
 func (es *ExerciseService) GetAll() []model.Exercise {
     exercises := es.service.GetExercises()
     return exercises
+}
+
+func (es *ExerciseService) GetAllJson() []byte {
+    exercises := es.service.GetExercises()
+
+    jsonData, err := json.Marshal(exercises)
+    if err != nil {
+        return []byte{}
+    }
+
+    return jsonData
 }
 
 func (es *ExerciseService) Add(name string) error {

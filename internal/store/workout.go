@@ -1,7 +1,7 @@
 package store
 
 import (
-    "fmt"
+	"fmt"
 	"time"
 
 	"github.com/section14/train-track/internal/config"
@@ -17,12 +17,12 @@ func NewWorkoutStore(env *config.Env) *WorkoutStore {
 }
 
 func (ws *WorkoutStore) GetWorkouts() []model.Workout {
-    var workouts []model.Workout
+	var workouts []model.Workout
 
-    q := `
+	q := `
         SELECT id, date
         FROM workout
-        ORDER BY date
+        ORDER BY date DESC
     `
 
 	stmt, err := ws.env.Db.Prepare(q)
@@ -39,9 +39,12 @@ func (ws *WorkoutStore) GetWorkouts() []model.Workout {
 	}
 	defer rows.Close()
 
-    for rows.Next() {
-        var w model.Workout
-        err = rows.Scan(&w.ID, &w.Date)
+	for rows.Next() {
+		var w model.Workout
+		var unixInt int64
+		err = rows.Scan(&w.ID, &unixInt)
+
+		w.Date = time.Unix(unixInt, 0)
 
 		if err != nil {
 			if err == rows.Err() {
@@ -49,22 +52,19 @@ func (ws *WorkoutStore) GetWorkouts() []model.Workout {
 			}
 		}
 
-        workouts = append(workouts, w)
-    }
+		workouts = append(workouts, w)
+	}
 
-    return workouts
+	return workouts
 }
 
 func (ws *WorkoutStore) GetWorkout(id int) []model.Movement {
-    var movements []model.Movement
+	var movements []model.Movement
 
-    q := `
-        SELECT m.id, m.sets, m.reps, m.date
-        FROM workout w
-        WHERE id=?
-        ORDER BY m.date
-        INNER JOIN
-        movement m ON w.id = o.workout_id
+	q := `
+        SELECT id, sets, reps, date
+        FROM movement
+        WHERE workout_id = ?
     `
 
 	stmt, err := ws.env.Db.Prepare(q)
@@ -81,11 +81,65 @@ func (ws *WorkoutStore) GetWorkout(id int) []model.Movement {
 	}
 	defer rows.Close()
 
-    for rows.Next() {
+	for rows.Next() {
+		var m model.Movement
+		var unixInt int64
 
-    }
+		err := rows.Scan(&m.ID, &m.Sets, &m.Reps, &unixInt)
+		m.Date = time.Unix(unixInt, 0)
 
-    return movements
+		if err != nil {
+			if err == rows.Err() {
+				fmt.Println("error scanning GetWorkout: ", err)
+			}
+		}
+
+		movements = append(movements, m)
+	}
+
+	return movements
+}
+
+func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
+	var movements []model.Movement
+
+	q := `
+        SELECT id, workout_id, exercise_id, sets, reps, date
+        FROM movement
+        WHERE workout_id = (SELECT id FROM workout ORDER BY id DESC LIMIT 1)
+    `
+
+	stmt, err := ws.env.Db.Prepare(q)
+	if err != nil {
+		fmt.Println("error preparing GetLastWorkout: ", err)
+		return movements
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		fmt.Println("error querying GetLastWorkout: ", err)
+		return movements
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var m model.Movement
+		var unixInt int64
+
+		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &unixInt)
+		m.Date = time.Unix(unixInt, 0)
+
+		if err != nil {
+			if err == rows.Err() {
+				fmt.Println("error scanning GetLastWorkout: ", err)
+			}
+		}
+
+		movements = append(movements, m)
+	}
+
+	return movements
 }
 
 func (ws *WorkoutStore) AddWorkout() error {
@@ -94,19 +148,19 @@ func (ws *WorkoutStore) AddWorkout() error {
 		return err
 	}
 
-    now := time.Now()
+	now := time.Now()
 	_, err = stmt.Exec(now.Unix())
 	if err != nil {
 		return err
 	}
 
-    return nil
+	return nil
 }
 
 func (ws *WorkoutStore) UpdateWorkout(e model.Workout) error {
-    return nil
+	return nil
 }
 
 func (ws *WorkoutStore) DeleteWorkout(id int) error {
-    return nil
+	return nil
 }

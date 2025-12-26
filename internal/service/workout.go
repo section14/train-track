@@ -1,7 +1,7 @@
 package service
 
 import (
-	"fmt"
+	//"fmt"
 
 	"github.com/section14/train-track/internal/model"
 )
@@ -9,6 +9,7 @@ import (
 type WorkoutManager interface {
 	GetWorkouts() []model.Workout
 	GetWorkout(id int) []model.Movement
+	GetLastWorkout() []model.Movement
 	AddWorkout() error
 	UpdateWorkout(e model.Workout) error
 	DeleteWorkout(id int) error
@@ -24,6 +25,15 @@ func NewWorkoutService(service WorkoutManager) *WorkoutService {
 
 func (ws *WorkoutService) GetAll() []model.Workout {
     workouts := ws.service.GetWorkouts()
-    fmt.Println("workouts", workouts)
     return workouts
+}
+
+func (ws *WorkoutService) GetLast() []model.Movement {
+    last := ws.service.GetLastWorkout()
+    return last
+}
+
+func (ws *WorkoutService) Add() error {
+    err := ws.service.AddWorkout()
+    return err
 }

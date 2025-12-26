@@ -4,10 +4,16 @@
         <meta charset="UTF-8">
         <title>{{.Title}}</title>
         <link href="/static/css/main.css" rel="stylesheet">
-        <script src="/static/js/request.js" defer></script>
-        <script src="/static/components/form-input.js"></script>
+        <script type="module" src="/static/js/request.js" defer></script>
+        <script type="module" src="/static/js/swap.js" defer></script>
+        <!-- web components -->
+        <script type="module" src="/static/components/form-input.js"></script>
+        <script type="module" src="/static/components/select-exercise.js"></script>
+        <script type="module" src="/static/components/workout-movement.js"></script>
+
+        <!-- extracted js -->
         {{ range .Js}}
-        <script src="{{.}}" defer></script>
+        <script type="module" src="{{.}}" defer></script>
         {{end}}
     </head>
 

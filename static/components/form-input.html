@@ -1,4 +1,25 @@
 <template id="form-input-template">
+    <style>
+        input {
+            font-size: inherit;
+            background-color: var(--light);
+            padding: 0.25rem 0.5rem;
+            line-height: 1.5;
+            border: 2px solid var(--dark);
+            border-radius: 0.25rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--dark);
+            background-color: oklch(from var(--light) l calc(c + 0.04) h);
+        }
+
+        input::placeholder {
+            color: oklch(from var(--med) calc(l + 0.08) c h);
+        }
+    </style>
+
     <label for="form-input"></label>
-    <input id="form-input" part="input-field" name="" type="text" placeholder="" value="" />
+    <input id="form-input" part="input-field" name="" type="" placeholder="" value="" />
 </template>

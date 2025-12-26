@@ -180,6 +180,7 @@ func forwardFuncs() template.FuncMap {
 		"editClick":   func(id int) template.HTMLAttr { return "" },
 		"editCancel":  func(id int) template.HTMLAttr { return "" },
 		"patchClick":  func(id int) template.HTMLAttr { return "" },
+		"selectClick": func(id int) template.HTMLAttr { return "" },
 	}
 }
 

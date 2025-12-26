@@ -1,17 +1,18 @@
 <div>
-    <div>
-        <select>
-            <option value="idk">idk</option>
-        </select>
-        <button type="button">Add Exercise</button>
+    <form id="add-workout-form"></form>
+
+    <div class="workout-view mt-4">
+        <div id="selected-workout"></div>
+        <div>
+            <ul>
+                {{range .}}
+                <li>Workout {{.ID}} {{.Date.Format "Jan 02, 2006 15:04 PM"}}</li>
+                {{end}}
+            </ul>
+        </div>
     </div>
-    <form id="add-workout-form">
-
-    </form>
-
-    <ul>
-        {{range .}}
-        <li>Workout {{.Date}}</li>
-        {{end}}
-    </ul>
 </div>
+
+<script>
+    console.log("oi")
+</script>

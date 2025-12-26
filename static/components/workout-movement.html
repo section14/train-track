@@ -1,0 +1,33 @@
+<template id="workout-movement-template">
+    <style>
+        .container {
+            border: 1px solid var(--light);
+            padding: var(--spacing-2);
+        }
+
+        button {
+            font-size: inherit;
+            color: var(--dark);
+            padding: 0.5rem;
+            background-color: var(--primary);
+            border: none;
+            border-radius: 0.375rem;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:hover {
+            cursor: pointer;
+            background-color: oklch(from var(--primary) calc(l - 0.08) c h);
+        }
+    </style>
+
+    <form id="movement-form" class="container">
+        <select-exercise id="exercise"></select-exercise>
+        <form-input id="sets" name="sets" type="number" placeholder="Enter Sets"></form-input>
+        <form-input id="reps" name="reps" type="number" placeholder="Enter Reps"></form-input>
+        <button type="submit">Save</button>
+    </form>
+</template>

@@ -4,7 +4,7 @@
 /*html, body, input, textarea, button {*/
 * {
     font-family: sans-serif;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 body {
@@ -53,6 +53,7 @@ ul li {
 
 /* shadow dom ------------------------------------------- */
 
+/*
 form-input::part(input-field) {
     font-size: inherit;
     background-color: var(--light);
@@ -69,9 +70,9 @@ form-input::part(input-field):focus {
 }
 
 form-input::part(input-field)::placeholder {
-    /*color: oklch(from var(--primary) calc(l + 0.08) c h);*/
     color: oklch(from var(--med) calc(l + 0.08) c h);
 }
+*/
 
 /* end shadow dom -------------------------------------- */
 
@@ -248,6 +249,12 @@ button:hover {
         display: none;
         flex: 0 1 auto;
     }
+}
+
+.workout-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3);
 }
 
 /* Turn cross-document view-transitions on */

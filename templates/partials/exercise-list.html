@@ -34,6 +34,9 @@
 </div>
 
 <script>
+    import { Delete, PatchForm } from '/static/js/request.js'
+    import { swapContent } from '/static/js/swap.js'
+
     const deleteExercise = (id) => {
         Delete(`/api/exercises/${id}`).then((res) => {
             swapContent("/api/partials/exercises", "exercise-list-container")

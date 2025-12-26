@@ -8,14 +8,16 @@ type Exercise struct {
 }
 
 type Movement struct {
-	ID   int       `json:"id"`
-	Sets int       `json:"sets"`
-	Reps int       `json:"reps"`
-	Date time.Time `json:"date"`
+	ID         int       `json:"id"`
+	ExerciseID int       `json:"exerciseId"`
+	WorkoutID  int       `json:"workoutId"`
+	Sets       int       `json:"sets"`
+	Reps       int       `json:"reps"`
+	Date       time.Time `json:"date"`
 }
 
 type Workout struct {
-	ID        int        `json:"id"`
+	ID int `json:"id"`
 	//Movements []Movement `json:"movements"`
-	Date      time.Time  `json:"date"`
+	Date time.Time `json:"date"`
 }

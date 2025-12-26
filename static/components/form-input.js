@@ -23,6 +23,7 @@ class FormInput extends HTMLElement {
     //component state
     dataObject = {
         name: "",
+        type: "text",
         value: "",
         placeholder: "",
         label: "",
@@ -32,7 +33,6 @@ class FormInput extends HTMLElement {
     static formAssociated = true;
 
     updateForm(e) {
-        console.log("changer value: ", e.target.value)
         this.internals.setFormValue(e.target.value)
     }
 
@@ -40,6 +40,7 @@ class FormInput extends HTMLElement {
         //input
         this.inputField = this.shadowRoot.querySelector("input");
         this.inputField.name = this.dataObject.name;
+        this.inputField.type = this.dataObject.type;
         this.inputField.placeholder = this.dataObject.placeholder;
 
         this.internals.setFormValue(this.dataObject.value);
@@ -59,16 +60,21 @@ class FormInput extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["name", "value", "label", "placeholder", "error-message"];
+        return ["name", "type", "value", "label", "placeholder", "error-message"];
     }
 
     //these methods update when the component attributes are changed from a parent
+    typeChanged(value) {
+        this.dataObject.type = value;
+    }
+
     nameChanged(value) {
         this.dataObject.name = value;
     }
 
     valueChanged(value) {
         this.dataObject.value = value;
+        this.inputField.setAttribute("value", value)
     }
 
     labelChanged(value) {
@@ -79,7 +85,7 @@ class FormInput extends HTMLElement {
         this.dataObject.placeholder = value;
     }
 
-    errorChanged(error) {}
+    errorChanged(error) { }
 
     /**
      * Runs when the value of an attribute is changed on the component
@@ -88,17 +94,18 @@ class FormInput extends HTMLElement {
      * @param  {String} newValue The new attribute value
      */
     attributeChangedCallback(name, oldValue, newValue) {
-        console.log(`Attribute ${name} has changed.`);
-        if (!this.inputField) {
-            console.log("why:", this.inputField);
-        }
-
         switch (name) {
+            case "type":
+                this.typeChanged(newValue);
+                break;
             case "name":
                 this.nameChanged(newValue);
                 break;
             case "value":
                 this.valueChanged(newValue);
+                if (this.internals) {
+                    this.internals.setFormValue(newValue)
+                }
                 break;
             case "label":
                 this.labelChanged(newValue);

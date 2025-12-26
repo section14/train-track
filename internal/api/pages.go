@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+    "html/template"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -55,10 +56,17 @@ func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
 		Title: "Workouts",
 		Js:    []string{
             appendPath("/pages/workouts.js"),
+			appendPath("/partials/workout-list.js"),
         },
 	}
 
-	err := s.tpls.ExecuteTemplate(w, "pages/workouts.html", head)
+	funcMap := template.FuncMap{
+		"addClick": func() template.HTMLAttr {
+            return template.HTMLAttr(NameClick("addWorkout"))
+        },
+	}
+
+	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "pages/workouts.html", head)
 	if err != nil {
 		fmt.Println("couldn't open workouts", err)
 	}

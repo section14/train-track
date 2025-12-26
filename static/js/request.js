@@ -1,4 +1,4 @@
-const getHTML = async (url) => {
+export const getHTML = async (url) => {
     try {
         const response = await fetch(url)
         if (!response.ok) {
@@ -13,7 +13,7 @@ const getHTML = async (url) => {
     }
 }
 
-const Get = (url) => {
+export const Get = (url) => {
     return new Promise((resolve, reject) => {
         fetch(url).then((response) => {
             if (!response.ok) {
@@ -27,7 +27,21 @@ const Get = (url) => {
     })
 }
 
-const PatchForm = (url, id, data) => {
+export const GetJson = (url) => {
+    return new Promise((resolve, reject) => {
+        fetch(url).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error getting HTML: ${response.status}`)
+            }
+
+            return resolve(response.json())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export const PatchForm = (url, id, data) => {
     return new Promise((resolve, reject) => {
         fetch(`${url}/${id}`, { method: "PATCH", body: new FormData(data) }).then((response) => {
             if (!response.ok) {
@@ -41,7 +55,21 @@ const PatchForm = (url, id, data) => {
     })
 }
 
-const PostForm = (url, data) => {
+export const Post = (url) => {
+    return new Promise((resolve, reject) => {
+        fetch(url, { method: "POST" }).then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error POST'ing: ${response.status}`)
+            }
+
+            return resolve(response.text())
+        }).catch((err) => {
+            reject(err)
+        })
+    })
+}
+
+export const PostForm = (url, data) => {
     return new Promise((resolve, reject) => {
         fetch(url, { method: "POST", body: new FormData(data) }).then((response) => {
             if (!response.ok) {
@@ -55,9 +83,9 @@ const PostForm = (url, data) => {
     })
 }
 
-const Delete = (url) => {
+export const Delete = (url) => {
     return new Promise((resolve, reject) => {
-        fetch(url, {method: "DELETE"}).then((response) => {
+        fetch(url, { method: "DELETE" }).then((response) => {
             if (!response.ok) {
                 throw new Error(`Error deleting: ${response.status}`)
             }
@@ -66,17 +94,5 @@ const Delete = (url) => {
         }).catch((err) => {
             reject(err)
         })
-    })
-}
-
-const swapContent = (url, container) => {
-    Get(url).then((res) => {
-        const cont = document.getElementById(container)
-
-        document.startViewTransition(() => {
-            cont.innerHTML = res
-        })
-    }).catch((err) => {
-        console.log("error fetching content", err)
     })
 }
