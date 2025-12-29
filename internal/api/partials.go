@@ -120,8 +120,11 @@ func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 	wo := s.workout.GetAll()
 
 	funcMap := template.FuncMap{
-		"editClick": func() template.HTMLAttr {
-            return template.HTMLAttr(NameClick("editWorkout"))
+		"addClick": func(id int) template.HTMLAttr {
+            return template.HTMLAttr(NameIdClick("addExerciseMovement", id))
+        },
+		"editClick": func(id int) template.HTMLAttr {
+            return template.HTMLAttr(NameIdClick("editWorkout", id))
         },
 	}
 

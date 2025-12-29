@@ -164,3 +164,8 @@ func (ws *WorkoutStore) UpdateWorkout(e model.Workout) error {
 func (ws *WorkoutStore) DeleteWorkout(id int) error {
 	return nil
 }
+
+
+func (ws *WorkoutStore) AddMovement() error {
+    return nil
+}

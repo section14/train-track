@@ -2,7 +2,10 @@
     <form id="add-workout-form"></form>
 
     <div class="workout-view mt-4">
-        <div id="selected-workout"></div>
+        <div>
+            <button id="add-exercise-movement" type="button" {{addClick .ID}}>Add Exercise</button>
+            <div id="selected-workout"></div>
+        </div>
         <div>
             <ul>
                 {{range .}}
@@ -14,5 +17,11 @@
 </div>
 
 <script>
-    console.log("oi")
+    import {Post} from "/static/js/request.js"
+    import {swapContent} from "/static/js/swap.js"
+
+    const addExerciseMovement = (id) => {
+        console.log("workout id: ", id)
+    }
+    //this.addExerciseButton = document.getElementById("add-exercise-movement")
 </script>
