@@ -11,6 +11,9 @@
                         <button type="button" data-workout-id="{{.ID}}">
                             Add Exercise
                         </button>
+                        <button type="button" data-test-id="{{.ID}}">
+                            Tester
+                        </button>
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column;" id="selected-workout"></div>
@@ -24,11 +27,30 @@
     import { Post } from "/static/js/request.js"
     import { swapContent } from "/static/js/swap.js"
 
-    const addExerciseMovement = (e) => {
+    //todo: Add a way to specify multiple data-* per function
+    //so, if addExerciseMovement needed another value like data-workout-name
+    //you could do:
+    //
+    //@handle:data-workout-id:data-workout-name
+    //
+    //and they'd both be passed into "e"
+
+    //in main.js, you probably need a way to aggregate all the dataset items
+
+    //@handle:data-workout-id
+    export const addExerciseMovement = (e) => {
         console.log("e: ", e)
-        console.log("workout id: ", e.target.dataset.workoutId);
+        //console.log("workout id: ", e.target.dataset.workoutId);
     }
 
-    const buttons = document.querySelectorAll("[data-workout-id]")
-    document.addEventListener("click", addExerciseMovement)
+    //@handle:data-test-id
+    export const addTestThingy = (e) => {
+        console.log("testes: ", e)
+        //console.log("workout id: ", e.target.dataset.workoutId);
+    }
+
+
+    // no work
+    //const buttons = document.querySelectorAll("[data-workout-id]")
+    //document.addEventListener("click", addExerciseMovement)
 </script>

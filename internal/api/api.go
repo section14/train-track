@@ -2,7 +2,6 @@ package api
 
 import (
 	"embed"
-	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -54,20 +53,16 @@ type PagesJs struct {
 	Js   []string
 }
 
-func extractSystemTemplates(rootDir, targetDir, extractedDir string) (map[string]string, error) {
+func extractSystemTemplates(
+	mainJs *extract.MainJs,
+	rootDir,
+	targetDir,
+	extractedDir string) (map[string]string, error) {
 	cleanRoot := filepath.Clean(rootDir)
 	//js := make([]string, 0)
 	js := make(map[string]string)
 
-	/*
-
-	   Idea for importing JS:
-
-	   Extract every page and partial to it's own js file, which mirrors the same folder/file
-	   structure as templates. Then, supply a list to the ExecuteTemplate function in
-	   api/pages.go, which will update the <head> with the correct imports
-
-	*/
+	eventHandlers := make([]extract.Handler, 0)
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -75,7 +70,8 @@ func extractSystemTemplates(rootDir, targetDir, extractedDir string) (map[string
 				return e1
 			}
 
-			newNode, e2 := extract.ExtractJs(path)
+			newNode, updatedHandlers, e2 := extract.ExtractJs(path, eventHandlers)
+			eventHandlers = updatedHandlers
 			if e2 != nil {
 				return e2
 			}
@@ -104,12 +100,7 @@ func extractSystemTemplates(rootDir, targetDir, extractedDir string) (map[string
 			}
 
 			if newNode.JsRemoved {
-				//build a new path for the js file
-				split := strings.Split(path, fmt.Sprintf("%s/%s", wd, "templates"))
-				trimmed := strings.TrimSuffix(split[1], ".html")
-				jsPath := fmt.Sprintf("%s%s%s%s", wd, "/static/js/extracted", trimmed, ".js")
-
-				//js = append(js, string(newNode.Js))
+				jsPath, _ := extract.MakeJsPath(path, wd)
 				js[jsPath] = string(newNode.Js)
 			}
 
@@ -118,58 +109,9 @@ func extractSystemTemplates(rootDir, targetDir, extractedDir string) (map[string
 		return nil
 	})
 
+	mainJs.Handlers = eventHandlers
+
 	return js, err
-}
-
-func buildJsFile(currentDir string, data map[string]string) error {
-	for jsFileName, jsFileData := range data {
-
-		//create new JS file (plus optional directory) and write to it
-		err := os.MkdirAll(filepath.Dir(jsFileName), 0770)
-		if err != nil {
-			return err
-		}
-
-		file, err := os.Create(jsFileName)
-		if err != nil {
-			return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
-		}
-		defer file.Close()
-
-		//var sb strings.Builder
-
-		//for _, j := range jsFileData {
-		//sb.WriteString(jsFileData)
-		//sb.WriteString("\n")
-		//}
-		_, err = file.WriteString(jsFileData)
-		if err != nil {
-			return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
-		}
-	}
-
-	//build extracted js file
-	/*
-		file, err := os.Create(filepath.Join(currentDir, "static", "js", "extracted.js"))
-		if err != nil {
-			return errors.New(fmt.Sprintf("couldn't open extracted.js file %s", err))
-		}
-		defer file.Close()
-
-		var sb strings.Builder
-
-		for _, j := range data {
-			sb.WriteString(j)
-			sb.WriteString("\n")
-		}
-
-		_, err = file.WriteString(sb.String())
-		if err != nil {
-			return errors.New(fmt.Sprintf("couldn't write to extracted.js %s", err))
-		}
-	*/
-
-	return nil
 }
 
 // todo: I think you're going to have to write forward "dummy" declarations like this
@@ -285,16 +227,24 @@ func ServeDev() {
 		log.Fatal("couldn't parse web component templates: ", err)
 	}
 
+	//main.js which executes event handlers
+	mainJs := extract.MainJs{
+		Handlers: make([]extract.Handler, 0),
+	}
+
 	//extract
-	js, err := extractSystemTemplates(templatesDir, "templates", "extracted")
+	js, err := extractSystemTemplates(&mainJs, templatesDir, "templates", "extracted")
 	if err != nil {
 		log.Fatal("couldn't extract templates: ", err)
 	}
 
-	err = buildJsFile(currentDir, js)
+	err = extract.BuildJsFile(currentDir, js)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//build main.js file
+	err = extract.BuildMainJs("/static/js/main.js", mainJs.Handlers)
 
 	//parse regular templates
 	t, err := systemTemplates(wc, extractedDir, nil)

@@ -14,7 +14,8 @@
     import { Post } from '/static/js/request.js'
     import { swapContent } from '/static/js/swap.js'
 
-    const addWorkout = () => {
+    //@handle:data-add-workout
+    export const addWorkout = () => {
         console.log("add workout")
         /*
         Post("/api/workouts").then((res) => {
@@ -32,6 +33,7 @@
         () => swapContent("/api/partials/workouts/last", "selected-workout"))
 
 
-    const button = document.querySelectorAll("[data-add-workout]")
-    document.addEventListener("click", addWorkout)
+    // no work
+    //const button = document.querySelectorAll("[data-add-workout]")
+    //document.addEventListener("click", addWorkout)
 </script>

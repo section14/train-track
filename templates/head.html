@@ -6,7 +6,6 @@
         <link href="/static/css/main.css" rel="stylesheet">
         <script type="module" src="/static/js/request.js" defer></script>
         <script type="module" src="/static/js/swap.js" defer></script>
-        <script type="module" src="/static/js/main.js" defer></script>
         <!-- web components -->
         <script type="module" src="/static/components/form-input.js"></script>
         <script type="module" src="/static/components/select-exercise.js"></script>
@@ -16,6 +15,9 @@
         {{ range .Js}}
         <script type="module" src="{{.}}" defer></script>
         {{end}}
+
+        <!-- global event bus, etc. -->
+        <script type="module" src="/static/js/extracted/main.js" defer></script>
     </head>
 
     <body>
