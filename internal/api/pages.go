@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-    "html/template"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -38,7 +37,6 @@ func (s *Server) homePage(w http.ResponseWriter, r *http.Request) {
 func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
 	head := HeadImports{
 		Title: "Exercises",
-        //make a function that adds to beginning path automatically
 		Js: []string{
 			appendPath("/pages/exercises.js"),
 			appendPath("/partials/exercise-list.js"),
@@ -61,13 +59,7 @@ func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
         },
 	}
 
-	funcMap := template.FuncMap{
-		"addClick": func() template.HTMLAttr {
-            return template.HTMLAttr(NameClick("addWorkout"))
-        },
-	}
-
-	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "pages/workouts.html", head)
+	err := s.tpls.ExecuteTemplate(w, "pages/workouts.html", head)
 	if err != nil {
 		fmt.Println("couldn't open workouts", err)
 	}

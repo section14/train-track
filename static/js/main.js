@@ -1,3 +1,3 @@
 document.body.onload = () => {
-    console.log("oi mate")
+    console.log("main loaded")
 }

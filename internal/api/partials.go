@@ -120,16 +120,7 @@ func (s *Server) deleteExercise(w http.ResponseWriter, r *http.Request) {
 func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 	wo := s.workout.GetAll()
 
-	funcMap := template.FuncMap{
-		"addClick": func(id int) template.HTMLAttr {
-            return template.HTMLAttr(NameIdClick("addExerciseMovement", id))
-        },
-		"editClick": func(id int) template.HTMLAttr {
-            return template.HTMLAttr(NameIdClick("editWorkout", id))
-        },
-	}
-
-	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/workout-list.html", wo)
+	err := s.tpls.ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
 	}
@@ -138,13 +129,7 @@ func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 func (s *Server) partialLastWorkout(w http.ResponseWriter, r *http.Request) {
     wo := s.workout.GetLast()
 
-	funcMap := template.FuncMap{
-		"editClick": func() template.HTMLAttr {
-            return template.HTMLAttr(NameClick("editWorkout"))
-        },
-	}
-
-	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/workout-item.html", wo)
+	err := s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
 	}
@@ -166,16 +151,7 @@ func (s *Server) updateWorkout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
     }
 
-	funcMap := template.FuncMap{
-		"addClick": func(id int) template.HTMLAttr {
-            return template.HTMLAttr(NameIdClick("addExerciseMovement", id))
-        },
-		"editClick": func(id int) template.HTMLAttr {
-            return template.HTMLAttr(NameIdClick("editWorkout", id))
-        },
-	}
-
-	err = s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/workout-list.html", wo)
+	err = s.tpls.ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
 	}
