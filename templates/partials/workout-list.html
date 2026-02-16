@@ -8,7 +8,7 @@
                 <div class="title">
                     <h3 class="ms-2">Workout {{.ID}} {{.Date.Format "Jan 02, 2006 15:04 PM"}}</h3>
                     <div class="me-2">
-                        <button type="button" data-workout-id="{{.ID}}">
+                        <button type="button" data-workout-id="{{.ID}}" data-workout-date="{{.Date}}">
                             Add Exercise
                         </button>
                         <button type="button" data-test-id="{{.ID}}">
@@ -37,7 +37,7 @@
 
     //in main.js, you probably need a way to aggregate all the dataset items
 
-    //@handle:data-workout-id
+    //@handle:data-workout-id:data-workout-date
     export const addExerciseMovement = (e) => {
         console.log("e: ", e)
         //console.log("workout id: ", e.target.dataset.workoutId);

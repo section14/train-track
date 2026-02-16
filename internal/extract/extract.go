@@ -21,7 +21,7 @@ type Element struct {
 
 type Handler struct {
 	AttrName         string
-	DataName         string
+	DataName         []string
 	FileName         string
 	RelativeFileName string
 	FuncName         string
@@ -93,8 +93,16 @@ func extractHanlder(path string, line []byte, extractor *extractState) []byte {
 	matcher := "//@handle:"
 
 	if !extractor.extracting && strings.Contains(string(line), matcher) {
+		//get data-* attribute names
 		trimmed := strings.Trim(string(line), " ")
 		attr := strings.TrimPrefix(trimmed, matcher)
+
+		rawDataNames := strings.Split(attr, ":")
+		dataNames := make([]string, 0)
+
+		for _, n := range rawDataNames {
+			dataNames = append(dataNames, dashToCamel(n))
+		}
 
 		//get current working directory
 		wd, _ := os.Getwd()
@@ -102,7 +110,7 @@ func extractHanlder(path string, line []byte, extractor *extractState) []byte {
 		//add everything but the function name
 		jsFileName, jsRelativeFileName := MakeJsPath(path, wd)
 		extractor.currentHandler.AttrName = attr
-		extractor.currentHandler.DataName = dashToCamel(attr)
+		extractor.currentHandler.DataName = dataNames
 		extractor.currentHandler.FileName = jsFileName
 		extractor.currentHandler.RelativeFileName = jsRelativeFileName
 		extractor.extracting = true
@@ -217,12 +225,12 @@ func BuildMainJs(path string, handlers []Handler) error {
 	//write content
 	var builder strings.Builder
 	var existingImports strings.Builder
-    var existingCode strings.Builder
+	var existingCode strings.Builder
 
 	//add existing js file data
 	scanner := bufio.NewScanner(mainFile)
 
-    //add existing code
+	//add existing code
 	for scanner.Scan() {
 		line := scanner.Bytes()
 
@@ -236,8 +244,8 @@ func BuildMainJs(path string, handlers []Handler) error {
 
 	}
 
-    //add existing imports
-    builder.WriteString(existingImports.String())
+	//add existing imports
+	builder.WriteString(existingImports.String())
 
 	//add generated content
 	builder.WriteString("//--------------------------------------------/\n")
@@ -247,7 +255,7 @@ func BuildMainJs(path string, handlers []Handler) error {
 
 	//build a map with filenames to prevent duplicate import statements
 	fileNameMap := make(map[string][]string)
-	dataToFuncMap := make(map[string]string)
+	dataToFuncMap := make(map[string][]string)
 
 	for _, handler := range handlers {
 		_, ok := fileNameMap[handler.RelativeFileName]
@@ -255,8 +263,7 @@ func BuildMainJs(path string, handlers []Handler) error {
 			fileNameMap[handler.RelativeFileName] = make([]string, 0)
 		}
 
-		dataToFuncMap[handler.DataName] = handler.FuncName
-
+		dataToFuncMap[handler.FuncName] = handler.DataName
 	}
 
 	//add functions
@@ -275,8 +282,8 @@ func BuildMainJs(path string, handlers []Handler) error {
 	builder.WriteString("//--------------------------------------------/\n")
 	builder.WriteString("\n\n")
 
-    //add existing code
-    builder.WriteString(existingCode.String())
+	//add existing code
+	builder.WriteString(existingCode.String())
 
 	_, err = file.WriteString(builder.String())
 	if err != nil {
@@ -322,13 +329,19 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	builder.WriteString("document.addEventListener(\"click\", globalClickHandler)\n\n")
 }
 
-// need data-* to func name map
-func buildGlobalSwitch(dataToFuncMap map[string]string) string {
+//build switch case in main.js click handler
+func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 	var switchBuilder strings.Builder
 
-	for key, value := range dataToFuncMap {
-		switchBuilder.WriteString(fmt.Sprintf("        case \"%s\": \n", key))
-		switchBuilder.WriteString(fmt.Sprintf("            %s(dataSet[key])\n", value))
+	for funcName, cases := range dataToFuncMap {
+		for _, caseName := range cases {
+			switchBuilder.WriteString(fmt.Sprintf("        case \"%s\": \n", caseName))
+		}
+		if len(cases) > 1 {
+			switchBuilder.WriteString(fmt.Sprintf("            %s(dataSet)\n", funcName))
+		} else {
+			switchBuilder.WriteString(fmt.Sprintf("            %s(dataSet[key])\n", funcName))
+		}
 		switchBuilder.WriteString("            break\n")
 	}
 	switchBuilder.WriteString("         default:\n")
