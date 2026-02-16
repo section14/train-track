@@ -58,26 +58,24 @@ func (ws *WorkoutStore) GetWorkouts() []model.Workout {
 	return workouts
 }
 
-func (ws *WorkoutStore) GetWorkout(id int) []model.Movement {
+func (ws *WorkoutStore) GetWorkout(id int) ([]model.Movement, error) {
 	var movements []model.Movement
 
 	q := `
-        SELECT id, sets, reps, date
+        SELECT id, workout_id, exercise_id, sets, reps, date
         FROM movement
         WHERE workout_id = ?
     `
 
 	stmt, err := ws.env.Db.Prepare(q)
 	if err != nil {
-		fmt.Println("error preparing GetWorkout: ", err)
-		return movements
+		return movements, err
 	}
 	defer stmt.Close()
 
 	rows, err := stmt.Query(id)
 	if err != nil {
-		fmt.Println("error querying GetWorkout: ", err)
-		return movements
+		return movements, err
 	}
 	defer rows.Close()
 
@@ -97,7 +95,7 @@ func (ws *WorkoutStore) GetWorkout(id int) []model.Movement {
 		movements = append(movements, m)
 	}
 
-	return movements
+	return movements, nil
 }
 
 func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
@@ -235,7 +233,7 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 	}
 
 	//get updated workout to return
-	workout := ws.GetWorkout(workoutId)
+	workout,_ := ws.GetWorkout(workoutId)
 	movements = workout
 
 	return movements, nil
@@ -263,9 +261,9 @@ func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, erro
 	}
 
 	// return updated movements for a workout
-	moves := ws.GetWorkout(m.ID)
+	moves, err := ws.GetWorkout(m.ID)
 
-	return moves, nil
+	return moves, err
 }
 
 func (ws *WorkoutStore) DeleteMovement(id int) ([]model.Movement, error) {
@@ -282,7 +280,7 @@ func (ws *WorkoutStore) DeleteMovement(id int) ([]model.Movement, error) {
 		return emptyMovements, err
 	}
 
-	movements := ws.GetWorkout(id)
+	movements, err := ws.GetWorkout(id)
 
-	return movements, nil
+	return movements, err
 }

@@ -16,7 +16,7 @@
                         </button>
                     </div>
                 </div>
-                <div style="display: flex; flex-direction: column;" id="selected-workout"></div>
+                <workout-item id="workout-{{.ID}}"></workout-item>
             </li>
             {{end}}
         </ul>
@@ -27,6 +27,7 @@
     import { Patch } from "/static/js/request.js"
     import { swapDirect } from "/static/js/swap.js"
 
+    //<div style="display: flex; flex-direction: column;" id="workout-{{.ID}}"></div>
     //todo: Add a way to specify multiple data-* per function
     //so, if addExerciseMovement needed another value like data-workout-name
     //you could do:
@@ -44,7 +45,7 @@
 
         Patch("/api/workouts/add/movement", id, null)
             .then((res) => {
-                swapDirect("selected-workout", res)
+                swapDirect(`workout-${id}`, res)
             })
             .catch((err) => {
                 console.log("patch err: ", err)

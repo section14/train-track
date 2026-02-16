@@ -50,7 +50,7 @@ class WorkoutMovement extends HTMLElement {
 
     deleteMovement = () => {
         const event = new CustomEvent("delete-movement", {
-            detail: this.dataObject.id,
+            detail: { id: this.dataObject.id, workoutId: this.dataObject.workoutId },
             bubbles: true,
             cancelable: true,
         })

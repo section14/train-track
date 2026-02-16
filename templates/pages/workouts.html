@@ -27,10 +27,15 @@
         */
     }
 
+    //todo: should probably limit bare swapContent calls to the page level
+    swapContent("/api/partials/workouts", "workout-list-container")
+
+    /*
     swapContent(
         "/api/partials/workouts",
         "workout-list-container",
         () => swapContent("/api/partials/workouts/last", "selected-workout"))
+    */
 
 
     // no work

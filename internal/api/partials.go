@@ -20,7 +20,8 @@ func partialsRoutes(serveMux *chi.Mux, s *Server) {
 
 	mux.Get("/exercises", s.partialExercises)
 	mux.Get("/workouts", s.partialWorkouts)
-	mux.Get("/workouts/last", s.partialLastWorkout)
+	mux.Get("/workouts/{id}", s.partialWorkout)
+	//mux.Get("/workouts/last", s.partialLastWorkout)
 
 	serveMux.Mount("/partials", mux)
 }
@@ -125,6 +126,19 @@ func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 	err := s.tpls.ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open workout list partial", err)
+	}
+}
+
+func (s *Server) partialWorkout(w http.ResponseWriter, r *http.Request) {
+	wo, err := s.workout.Get(r)
+    if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+	err = s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
+	if err != nil {
+		fmt.Println("couldn't open workout item partial", err)
 	}
 }
 

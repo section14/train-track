@@ -23,18 +23,19 @@
             //"/api/partials/workouts",
             //"workout-list-container",
             //() => swapContent("/api/partials/workouts/last", "selected-workout"))
-           swapContent("/api/partials/workouts/last", "selected-workout")
+            swapContent(`/api/partials/workouts/${w["workoutId"]}`, `workout-${w["workoutId"]}`)
         }).catch((err) => {
             console.log("error patching movement", err);
         })
     }
 
     const deleteMovement = (e) => {
-        const id = e.detail
+        const id = e.detail.id
+        const workoutId = e.detail.workoutId
         const url = `/api/workouts/delete/movement/${id}`
 
         Delete(url).then(() => {
-            swapContent("/api/partials/workouts/last", "selected-workout")
+            swapContent("/api/partials/workouts/last", `workout-${workoutId}`)
         }).catch((err) => {
             console.log("error deleting movement: ", err)
         })
