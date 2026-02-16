@@ -175,7 +175,7 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 				//add the func name
 				handlers = append(handlers, extractor.currentHandler)
 
-                //write func definition line
+				//write func definition line
 				sbJs.Write(newLine)
 				sbJs.Write([]byte("\n"))
 
@@ -200,13 +200,6 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 func BuildMainJs(path string, handlers []Handler) error {
 	wd, _ := os.Getwd()
 
-    /*
-
-    Do a line by line check for imports in the existing file
-    and add those to the top first, along with the generated imports
-
-    */
-
 	//open and create files
 	mainFile, err := os.Open(fmt.Sprintf("%s%s", wd, path))
 	if err != nil {
@@ -215,9 +208,6 @@ func BuildMainJs(path string, handlers []Handler) error {
 	defer mainFile.Close()
 
 	mainFileName := fmt.Sprintf("%s/static/js/extracted/main.js", wd)
-
-	fmt.Println("main file name?", mainFileName)
-
 	file, err := os.Create(mainFileName)
 	if err != nil {
 		return errors.New(fmt.Sprintf("couldn't create extracted main.js file %s", err))
@@ -226,9 +216,28 @@ func BuildMainJs(path string, handlers []Handler) error {
 
 	//write content
 	var builder strings.Builder
+	var existingImports strings.Builder
+    var existingCode strings.Builder
 
 	//add existing js file data
 	scanner := bufio.NewScanner(mainFile)
+
+    //add existing code
+	for scanner.Scan() {
+		line := scanner.Bytes()
+
+		if strings.Contains(string(line), "import") {
+			existingImports.Write(line)
+			existingImports.WriteString("\n")
+		} else {
+			existingCode.Write(line)
+			existingCode.WriteString("\n")
+		}
+
+	}
+
+    //add existing imports
+    builder.WriteString(existingImports.String())
 
 	//add generated content
 	builder.WriteString("//--------------------------------------------/\n")
@@ -258,20 +267,16 @@ func BuildMainJs(path string, handlers []Handler) error {
 	}
 
 	buildImports(&builder, fileNameMap)
-    switchStmt := buildGlobalSwitch(dataToFuncMap)
-    buildGlobalClickHandler(&builder, switchStmt)
+	switchStmt := buildGlobalSwitch(dataToFuncMap)
+	buildGlobalClickHandler(&builder, switchStmt)
 
 	builder.WriteString("//--------------------------------------------/\n")
 	builder.WriteString("//---------- End Generated Content: ----------/\n")
 	builder.WriteString("//--------------------------------------------/\n")
 	builder.WriteString("\n\n")
 
-	//todo: add this stuff at the end, actually, or the middle
-	for scanner.Scan() {
-		line := scanner.Bytes()
-		builder.Write(line)
-		builder.WriteString("\n")
-	}
+    //add existing code
+    builder.WriteString(existingCode.String())
 
 	_, err = file.WriteString(builder.String())
 	if err != nil {
@@ -307,7 +312,7 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	builder.WriteString("    if (button) {\n")
 	builder.WriteString("        switch(key) {\n")
 
-    builder.WriteString(switchStmt)
+	builder.WriteString(switchStmt)
 
 	//end of function
 	builder.WriteString("        }\n")
