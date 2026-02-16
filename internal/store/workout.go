@@ -83,7 +83,7 @@ func (ws *WorkoutStore) GetWorkout(id int) ([]model.Movement, error) {
 		var m model.Movement
 		var unixInt int64
 
-		err := rows.Scan(&m.ID, &m.Sets, &m.Reps, &unixInt)
+		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &unixInt)
 		m.Date = time.Unix(unixInt, 0)
 
 		if err != nil {
@@ -266,7 +266,7 @@ func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, erro
 	return moves, err
 }
 
-func (ws *WorkoutStore) DeleteMovement(id int) ([]model.Movement, error) {
+func (ws *WorkoutStore) DeleteMovement(id int, workoutId int) ([]model.Movement, error) {
 	var emptyMovements []model.Movement
 
 	stmt, err := ws.env.Db.Prepare("DELETE FROM movement WHERE id=?")
@@ -280,7 +280,7 @@ func (ws *WorkoutStore) DeleteMovement(id int) ([]model.Movement, error) {
 		return emptyMovements, err
 	}
 
-	movements, err := ws.GetWorkout(id)
+	movements, err := ws.GetWorkout(workoutId)
 
 	return movements, err
 }

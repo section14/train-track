@@ -16,10 +16,9 @@ import (
 type WorkoutManager interface {
 	GetWorkouts() []model.Workout
 	GetWorkout(id int) ([]model.Movement, error)
-	GetLastWorkout() []model.Movement
 	AddMovement(workoutId int) ([]model.Movement, error)
 	UpdateMovement(m model.Movement) ([]model.Movement, error)
-	DeleteMovement(id int) ([]model.Movement, error)
+	DeleteMovement(id int, workoutId int) ([]model.Movement, error)
 	AddWorkout() error
 	UpdateWorkout(e model.Workout) ([]model.Movement, error)
 	DeleteWorkout(id int) ([]model.Workout, error)
@@ -43,10 +42,6 @@ func (ws *WorkoutService) Get(r *http.Request) ([]model.Movement, error) {
 	return ws.service.GetWorkout(int(id))
 }
 
-func (ws *WorkoutService) GetLast() []model.Movement {
-	return ws.service.GetLastWorkout()
-}
-
 func (ws *WorkoutService) Add() error {
 	err := ws.service.AddWorkout()
 	return err
@@ -55,13 +50,17 @@ func (ws *WorkoutService) Add() error {
 func (ws *WorkoutService) AddMovement(r *http.Request) ([]model.Movement, error) {
 	idStr := r.PathValue("id")
 	id, _ := strconv.ParseInt(idStr, 10, 64)
+
 	return ws.service.AddMovement(int(id))
 }
 
 func (ws *WorkoutService) DeleteMovement(r *http.Request) ([]model.Movement, error) {
-	idStr := r.PathValue("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	return ws.service.DeleteMovement(int(id))
+	workoutIdStr := r.PathValue("workoutId")
+	movementIdStr := r.PathValue("movementId")
+	movementId, _ := strconv.ParseInt(movementIdStr, 10, 64)
+	workoutId, _ := strconv.ParseInt(workoutIdStr, 10, 64)
+
+	return ws.service.DeleteMovement(int(movementId), int(workoutId))
 }
 
 func (ws *WorkoutService) Update(r *http.Request) ([]model.Movement, error) {

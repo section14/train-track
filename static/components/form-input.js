@@ -120,6 +120,6 @@ class FormInput extends HTMLElement {
                 console.log("unknown attribute: ", name);
         }
     }
-}
+};
 
 customElements.define("form-input", FormInput);

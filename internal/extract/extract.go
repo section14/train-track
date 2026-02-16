@@ -205,47 +205,18 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 	return elem, handlers, nil
 }
 
-func BuildMainJs(path string, handlers []Handler) error {
+func BuildHandlersJs(handlers []Handler) error {
 	wd, _ := os.Getwd()
 
-	//open and create files
-	mainFile, err := os.Open(fmt.Sprintf("%s%s", wd, path))
-	if err != nil {
-		return err
-	}
-	defer mainFile.Close()
-
-	mainFileName := fmt.Sprintf("%s/static/js/extracted/main.js", wd)
+	mainFileName := fmt.Sprintf("%s/static/js/extracted/handlers.js", wd)
 	file, err := os.Create(mainFileName)
 	if err != nil {
-		return errors.New(fmt.Sprintf("couldn't create extracted main.js file %s", err))
+		return errors.New(fmt.Sprintf("couldn't create extracted handlers.js file %s", err))
 	}
 	defer file.Close()
 
 	//write content
 	var builder strings.Builder
-	var existingImports strings.Builder
-	var existingCode strings.Builder
-
-	//add existing js file data
-	scanner := bufio.NewScanner(mainFile)
-
-	//add existing code
-	for scanner.Scan() {
-		line := scanner.Bytes()
-
-		if strings.Contains(string(line), "import") {
-			existingImports.Write(line)
-			existingImports.WriteString("\n")
-		} else {
-			existingCode.Write(line)
-			existingCode.WriteString("\n")
-		}
-
-	}
-
-	//add existing imports
-	builder.WriteString(existingImports.String())
 
 	//add generated content
 	builder.WriteString("//--------------------------------------------/\n")
@@ -281,9 +252,6 @@ func BuildMainJs(path string, handlers []Handler) error {
 	builder.WriteString("//---------- End Generated Content: ----------/\n")
 	builder.WriteString("//--------------------------------------------/\n")
 	builder.WriteString("\n\n")
-
-	//add existing code
-	builder.WriteString(existingCode.String())
 
 	_, err = file.WriteString(builder.String())
 	if err != nil {

@@ -16,7 +16,11 @@
                         </button>
                     </div>
                 </div>
-                <workout-item id="workout-{{.ID}}"></workout-item>
+                <partial-loader
+                    target-id="workout-{{.ID}}"
+                    endpoint="/api/partials/workouts/{{.ID}}">
+                </partial-loader>
+                <div id="workout-{{.ID}}" style="display: flex; flex-direction: column;"></div>
             </li>
             {{end}}
         </ul>
@@ -27,20 +31,8 @@
     import { Patch } from "/static/js/request.js"
     import { swapDirect } from "/static/js/swap.js"
 
-    //<div style="display: flex; flex-direction: column;" id="workout-{{.ID}}"></div>
-    //todo: Add a way to specify multiple data-* per function
-    //so, if addExerciseMovement needed another value like data-workout-name
-    //you could do:
-    //
-    //[at]handle:data-workout-id:data-workout-name
-    //
-    //and they'd both be passed into "e"
-
-    //in main.js, you probably need a way to aggregate all the dataset items
-
     //@handle:data-workout-id:data-workout-date
     export const addExerciseMovement = (e) => {
-        console.log("e: ", e)
         const id = e.workoutId
 
         Patch("/api/workouts/add/movement", id, null)
@@ -58,9 +50,4 @@
         console.log("testes: ", e)
         //console.log("workout id: ", e.target.dataset.workoutId);
     }
-
-
-    // no work
-    //const buttons = document.querySelectorAll("[data-workout-id]")
-    //document.addEventListener("click", addExerciseMovement)
 </script>

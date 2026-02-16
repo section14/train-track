@@ -4,7 +4,7 @@
 {{ template "select-exercise.html"}}
 {{ template "workout-movement.html"}}
 
-<div class="page-workouts layout">
+<div id="workouts-container" class="page-workouts layout">
     <button type="button" data-add-workout>Add New Workout</button>
     <div id="workout-list-container"></div>
 </div>
@@ -34,7 +34,7 @@
     swapContent(
         "/api/partials/workouts",
         "workout-list-container",
-        () => swapContent("/api/partials/workouts/last", "selected-workout"))
+        () => swapContent("/api/partials/workouts/3", "workout-3"))
     */
 
 

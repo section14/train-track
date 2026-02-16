@@ -227,13 +227,13 @@ func ServeDev() {
 		log.Fatal("couldn't parse web component templates: ", err)
 	}
 
-	//main.js which executes event handlers
-	mainJs := extract.MainJs{
+	//handlers.js which executes event handlers
+	handlersJs := extract.MainJs{
 		Handlers: make([]extract.Handler, 0),
 	}
 
 	//extract
-	js, err := extractSystemTemplates(&mainJs, templatesDir, "templates", "extracted")
+	js, err := extractSystemTemplates(&handlersJs, templatesDir, "templates", "extracted")
 	if err != nil {
 		log.Fatal("couldn't extract templates: ", err)
 	}
@@ -243,8 +243,8 @@ func ServeDev() {
 		log.Fatal(err)
 	}
 
-	//build main.js file
-	err = extract.BuildMainJs("/static/js/main.js", mainJs.Handlers)
+	//build handlers.js file
+	err = extract.BuildHandlersJs(handlersJs.Handlers)
 
 	//parse regular templates
 	t, err := systemTemplates(wc, extractedDir, nil)

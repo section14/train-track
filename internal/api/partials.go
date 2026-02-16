@@ -21,7 +21,6 @@ func partialsRoutes(serveMux *chi.Mux, s *Server) {
 	mux.Get("/exercises", s.partialExercises)
 	mux.Get("/workouts", s.partialWorkouts)
 	mux.Get("/workouts/{id}", s.partialWorkout)
-	//mux.Get("/workouts/last", s.partialLastWorkout)
 
 	serveMux.Mount("/partials", mux)
 }
@@ -36,7 +35,8 @@ func postRoutes(serveMux *chi.Mux, s *Server) {
 	serveMux.Post("/workouts", s.addWorkout)
 	serveMux.Patch("/workouts/add/movement/{id}", s.addMovement)
 	serveMux.Patch("/workouts/{workoutId}/{movementId}", s.updateWorkout)
-	serveMux.Delete("/workouts/delete/movement/{id}", s.deleteMovement)
+	//serveMux.Delete("/workouts/delete/movement/{id}", s.deleteMovement)
+    serveMux.Delete("/workouts/{workoutId}/{movementId}", s.deleteMovement)
 }
 
 func NameClick(name string) string {
@@ -137,15 +137,6 @@ func (s *Server) partialWorkout(w http.ResponseWriter, r *http.Request) {
     }
 
 	err = s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
-	if err != nil {
-		fmt.Println("couldn't open workout item partial", err)
-	}
-}
-
-func (s *Server) partialLastWorkout(w http.ResponseWriter, r *http.Request) {
-	wo := s.workout.GetLast()
-
-	err := s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
 	if err != nil {
 		fmt.Println("couldn't open workout item partial", err)
 	}
