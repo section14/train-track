@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"strconv"
 	//"fmt"
 	"net/http"
 	"time"
@@ -16,10 +17,12 @@ type WorkoutManager interface {
 	GetWorkouts() []model.Workout
 	GetWorkout(id int) []model.Movement
 	GetLastWorkout() []model.Movement
+    AddMovement(workoutId int) ([]model.Movement, error)
 	UpdateMovement(m model.Movement) ([]model.Movement, error)
+    DeleteMovement(id int) ([]model.Movement, error)
 	AddWorkout() error
 	UpdateWorkout(e model.Workout) ([]model.Movement, error)
-	DeleteWorkout(id int) error
+	DeleteWorkout(id int) ([]model.Workout, error)
 }
 
 type WorkoutService struct {
@@ -43,6 +46,18 @@ func (ws *WorkoutService) GetLast() []model.Movement {
 func (ws *WorkoutService) Add() error {
 	err := ws.service.AddWorkout()
 	return err
+}
+
+func (ws *WorkoutService) AddMovement(r *http.Request) ([]model.Movement, error){
+	idStr := r.PathValue("id")
+    id, _ := strconv.ParseInt(idStr, 10, 64)
+    return ws.service.AddMovement(int(id))
+}
+
+func (ws *WorkoutService) DeleteMovement(r *http.Request) ([]model.Movement, error){
+	idStr := r.PathValue("id")
+    id, _ := strconv.ParseInt(idStr, 10, 64)
+    return ws.service.DeleteMovement(int(id))
 }
 
 func (ws *WorkoutService) Update(r *http.Request) ([]model.Movement, error) {

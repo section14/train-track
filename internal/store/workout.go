@@ -147,6 +147,7 @@ func (ws *WorkoutStore) AddWorkout() error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 
 	now := time.Now()
 	_, err = stmt.Exec(now.Unix())
@@ -158,41 +159,130 @@ func (ws *WorkoutStore) AddWorkout() error {
 }
 
 func (ws *WorkoutStore) UpdateWorkout(e model.Workout) ([]model.Movement, error) {
-    var movements []model.Movement
+	var movements []model.Movement
 	return movements, nil
 }
 
-func (ws *WorkoutStore) DeleteWorkout(id int) error {
-	return nil
+func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
+	var emptyWorkouts []model.Workout
+
+    //todo: prevent deleting a workout if it's the only one
+	stmt, err := ws.env.Db.Prepare("DELETE FROM workout WHERE id=?")
+	if err != nil {
+		return emptyWorkouts, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return emptyWorkouts, err
+	}
+
+	workouts := ws.GetWorkouts()
+
+	return workouts, nil
 }
 
+func (ws *WorkoutStore) GetPlaceHolderExercise() (int, error) {
+	var id int
 
-func (ws *WorkoutStore) AddMovement() error {
-    return nil
+	stmt, err := ws.env.Db.Prepare("SELECT id FROM exercise LIMIT 1")
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow().Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
+	var movements []model.Movement
+	var id int
+
+	placeholder, err := ws.GetPlaceHolderExercise()
+	if err != nil {
+		return movements, err
+	}
+
+	m := model.Movement{
+		WorkoutID:  workoutId,
+		ExerciseID: placeholder,
+		Sets:       3,
+		Reps:       5,
+		Date:       time.Now(),
+	}
+
+	q := `
+        INSERT
+        INTO movement(workout_id, exercise_id, sets, reps, date)
+        VALUES(?,?,?,?,?)
+        RETURNING id
+    `
+	stmt, err := ws.env.Db.Prepare(q)
+	if err != nil {
+		return movements, err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(m.WorkoutID, m.ExerciseID, m.Sets, m.Reps, m.Date).Scan(&id)
+	if err != nil {
+		return movements, err
+	}
+
+	//get updated workout to return
+	workout := ws.GetWorkout(workoutId)
+	movements = workout
+
+	return movements, nil
 }
 
 func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, error) {
-    var movements []model.Movement
+	var emptyMovements []model.Movement
 
-    // update a movement
-    updateQ := `
+	// update a movement
+	updateQ := `
         UPDATE movement
         SET exercise_id=?, sets=?, reps=?
         WHERE id=?
     `
 
-    updateStmt, err := ws.env.Db.Prepare(updateQ)
-    if err != nil {
-        return movements, err
-    }
+	updateStmt, err := ws.env.Db.Prepare(updateQ)
+	if err != nil {
+		return emptyMovements, err
+	}
+	defer updateStmt.Close()
 
-    _, err = updateStmt.Exec(m.ExerciseID, m.Sets, m.Reps, m.ID)
-    if err != nil {
-        return movements, err
-    }
+	_, err = updateStmt.Exec(m.ExerciseID, m.Sets, m.Reps, m.ID)
+	if err != nil {
+		return emptyMovements, err
+	}
 
-    // return updated movements for a workout
-    moves := ws.GetWorkout(m.ID)
+	// return updated movements for a workout
+	moves := ws.GetWorkout(m.ID)
 
-    return moves, nil
+	return moves, nil
+}
+
+func (ws *WorkoutStore) DeleteMovement(id int) ([]model.Movement, error) {
+	var emptyMovements []model.Movement
+
+	stmt, err := ws.env.Db.Prepare("DELETE FROM movement WHERE id=?")
+	if err != nil {
+		return emptyMovements, err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return emptyMovements, err
+	}
+
+	movements := ws.GetWorkout(id)
+
+	return movements, nil
 }

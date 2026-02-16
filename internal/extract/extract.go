@@ -313,11 +313,11 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	//beginning of function
 	builder.WriteString("const globalClickHandler = (e) => {\n")
-	builder.WriteString("    const dataSet = e.target.dataset\n")
-	builder.WriteString("    const key = Object.keys(dataSet)[0]\n\n")
-	builder.WriteString("    const button = e.target.closest(\"button\")\n\n")
+	builder.WriteString("    const dataSet = e.target.dataset;\n")
+	builder.WriteString("    const key = Object.keys(dataSet)[0];\n\n")
+	builder.WriteString("    const button = e.target.closest(\"button\");\n\n")
 	builder.WriteString("    if (button) {\n")
-	builder.WriteString("        switch(key) {\n")
+	builder.WriteString("        switch (key) {\n")
 
 	builder.WriteString(switchStmt)
 
@@ -326,7 +326,7 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	builder.WriteString("    }\n")
 	builder.WriteString("}\n\n")
 	builder.WriteString("// global click event listener\n")
-	builder.WriteString("document.addEventListener(\"click\", globalClickHandler)\n\n")
+	builder.WriteString("document.addEventListener(\"click\", globalClickHandler);\n\n")
 }
 
 //build switch case in main.js click handler
@@ -335,17 +335,17 @@ func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 
 	for funcName, cases := range dataToFuncMap {
 		for _, caseName := range cases {
-			switchBuilder.WriteString(fmt.Sprintf("        case \"%s\": \n", caseName))
+			switchBuilder.WriteString(fmt.Sprintf("            case \"%s\": \n", caseName))
 		}
 		if len(cases) > 1 {
-			switchBuilder.WriteString(fmt.Sprintf("            %s(dataSet)\n", funcName))
+			switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet);\n", funcName))
 		} else {
-			switchBuilder.WriteString(fmt.Sprintf("            %s(dataSet[key])\n", funcName))
+			switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", funcName))
 		}
-		switchBuilder.WriteString("            break\n")
+		switchBuilder.WriteString("                break;\n")
 	}
-	switchBuilder.WriteString("         default:\n")
-	switchBuilder.WriteString("            console.error(\"unknown dataset item: \", key)\n")
+	switchBuilder.WriteString("            default:\n")
+	switchBuilder.WriteString("                console.error(\"unknown dataset item: \", key);\n")
 
 	return switchBuilder.String()
 }

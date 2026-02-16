@@ -40,8 +40,17 @@ class WorkoutMovement extends HTMLElement {
             reps: parseInt(entries["reps"]),
         }
 
-        const event = new CustomEvent('update-workout', {
+        const event = new CustomEvent("update-workout", {
             detail: mObj,
+            bubbles: true,
+            cancelable: true,
+        })
+        document.dispatchEvent(event)
+    }
+
+    deleteMovement = () => {
+        const event = new CustomEvent("delete-movement", {
+            detail: this.dataObject.id,
             bubbles: true,
             cancelable: true,
         })
@@ -52,6 +61,10 @@ class WorkoutMovement extends HTMLElement {
         //form submit listener
         this.movementForm = this.shadowRoot.getElementById("movement-form")
         this.movementForm.addEventListener("submit", this.submitForm.bind(this))
+
+        //delete listener
+        this.deleteBtn = this.shadowRoot.getElementById("delete-mvmt")
+        this.deleteBtn.addEventListener("click", this.deleteMovement.bind(this))
 
         //child element refs -- set defaults
         this.exercise = this.shadowRoot.getElementById("exercise")
@@ -68,6 +81,7 @@ class WorkoutMovement extends HTMLElement {
 
     disconnectedCallback() {
         this.movementForm.removeEventListener("submit", this.submitForm.bind(this))
+        this.deleteBtn.removeEventListener("click", this.deleteMovement.bind(this))
     }
 
     static get observedAttributes() {

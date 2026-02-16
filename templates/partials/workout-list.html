@@ -24,8 +24,8 @@
 </div>
 
 <script>
-    import { Post } from "/static/js/request.js"
-    import { swapContent } from "/static/js/swap.js"
+    import { Patch } from "/static/js/request.js"
+    import { swapDirect } from "/static/js/swap.js"
 
     //todo: Add a way to specify multiple data-* per function
     //so, if addExerciseMovement needed another value like data-workout-name
@@ -40,6 +40,15 @@
     //@handle:data-workout-id:data-workout-date
     export const addExerciseMovement = (e) => {
         console.log("e: ", e)
+        const id = e.workoutId
+
+        Patch("/api/workouts/add/movement", id, null)
+            .then((res) => {
+                swapDirect("selected-workout", res)
+            })
+            .catch((err) => {
+                console.log("patch err: ", err)
+            })
         //console.log("workout id: ", e.target.dataset.workoutId);
     }
 

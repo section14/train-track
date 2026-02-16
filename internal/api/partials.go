@@ -33,7 +33,9 @@ func postRoutes(serveMux *chi.Mux, s *Server) {
 	serveMux.Delete("/exercises/{id}", s.deleteExercise)
 
 	serveMux.Post("/workouts", s.addWorkout)
-    serveMux.Patch("/workouts/{workoutId}/{movementId}", s.updateWorkout)
+	serveMux.Patch("/workouts/add/movement/{id}", s.addMovement)
+	serveMux.Patch("/workouts/{workoutId}/{movementId}", s.updateWorkout)
+	serveMux.Delete("/workouts/delete/movement/{id}", s.deleteMovement)
 }
 
 func NameClick(name string) string {
@@ -69,8 +71,8 @@ func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) exerciseJson(w http.ResponseWriter, r *http.Request) {
-    e := s.exercise.GetAllJson()
-    w.Write(e)
+	e := s.exercise.GetAllJson()
+	w.Write(e)
 }
 
 func (s *Server) addExercise(w http.ResponseWriter, r *http.Request) {
@@ -122,21 +124,21 @@ func (s *Server) partialWorkouts(w http.ResponseWriter, r *http.Request) {
 
 	err := s.tpls.ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
-		fmt.Println("couldn't open exercise list partial", err)
+		fmt.Println("couldn't open workout list partial", err)
 	}
 }
 
 func (s *Server) partialLastWorkout(w http.ResponseWriter, r *http.Request) {
-    wo := s.workout.GetLast()
+	wo := s.workout.GetLast()
 
 	err := s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
 	if err != nil {
-		fmt.Println("couldn't open exercise list partial", err)
+		fmt.Println("couldn't open workout item partial", err)
 	}
 }
 
 func (s *Server) addWorkout(w http.ResponseWriter, r *http.Request) {
-    err := s.workout.Add()
+	err := s.workout.Add()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -145,15 +147,41 @@ func (s *Server) addWorkout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) updateWorkout(w http.ResponseWriter, r *http.Request) {
-    wo, err := s.workout.Update(r)
-    if err != nil {
+func (s *Server) addMovement(w http.ResponseWriter, r *http.Request) {
+	wo, err := s.workout.AddMovement(r)
+
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-    }
+	}
+
+	err = s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
+	if err != nil {
+		fmt.Println("couldn't open workout item partial", err)
+	}
+}
+
+func (s *Server) deleteMovement(w http.ResponseWriter, r *http.Request) {
+	wo, err := s.workout.DeleteMovement(r)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	err = s.tpls.ExecuteTemplate(w, "partials/workout-item.html", wo)
+	if err != nil {
+		fmt.Println("couldn't open workout item partial", err)
+	}
+}
+
+func (s *Server) updateWorkout(w http.ResponseWriter, r *http.Request) {
+	wo, err := s.workout.Update(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 
 	err = s.tpls.ExecuteTemplate(w, "partials/workout-list.html", wo)
 	if err != nil {
-		fmt.Println("couldn't open exercise list partial", err)
+		fmt.Println("couldn't open workout list partial", err)
 	}
 }
 

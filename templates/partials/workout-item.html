@@ -9,13 +9,12 @@
 {{end}}
 
 <script>
-    import { Patch } from '/static/js/request.js'
+    import { Delete, Patch } from '/static/js/request.js'
     import { swapContent } from '/static/js/swap.js'
 
     const workoutMovements = {}
 
     const updateWorkout = (e) => {
-        console.log("updated: ", e.detail);
         const w = e.detail;
         workoutMovements[w["id"]] = w;
 
@@ -30,6 +29,18 @@
         })
     }
 
+    const deleteMovement = (e) => {
+        const id = e.detail
+        const url = `/api/workouts/delete/movement/${id}`
+
+        Delete(url).then(() => {
+            swapContent("/api/partials/workouts/last", "selected-workout")
+        }).catch((err) => {
+            console.log("error deleting movement: ", err)
+        })
+    }
+
     document.addEventListener("update-workout", updateWorkout);
+    document.addEventListener("delete-movement", deleteMovement);
 </script>
 

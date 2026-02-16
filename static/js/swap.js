@@ -12,3 +12,12 @@ export const swapContent = (url, container, autoload) => {
         console.log("error fetching content", err)
     })
 }
+
+export const swapDirect = (container, data, autoload) => {
+    const cont = document.getElementById(container)
+
+    document.startViewTransition(() => {
+        cont.innerHTML = data
+        if (autoload) autoload()
+    })
+}
