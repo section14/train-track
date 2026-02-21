@@ -33,6 +33,7 @@ func postRoutes(serveMux *chi.Mux, s *Server) {
 
 	serveMux.Post("/workouts", s.addWorkout)
 	serveMux.Delete("/workouts/{id}", s.deleteWorkout)
+    // make this PATCH /workouts/{workoutId} ... maybe
 	serveMux.Patch("/workouts/add/movement/{id}", s.addMovement)
 	serveMux.Patch("/workouts/{workoutId}/{movementId}", s.updateWorkout)
     serveMux.Delete("/workouts/{workoutId}/{movementId}", s.deleteMovement)

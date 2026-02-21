@@ -15,12 +15,14 @@ class WorkoutMovement extends HTMLElement {
         exerciseId: 0,
         sets: 0,
         reps: 0,
+        weight: 0,
     }
 
     movementForm;
     exercise;
     sets;
     reps;
+    weight;
 
     submitForm = (e) => {
         if (!e) return
@@ -38,6 +40,7 @@ class WorkoutMovement extends HTMLElement {
             exerciseId: parseInt(entries["exercise"]),
             sets: parseInt(entries["sets"]),
             reps: parseInt(entries["reps"]),
+            weight: parseInt(entries["weight"]),
         }
 
         const event = new CustomEvent("update-workout", {
@@ -70,10 +73,12 @@ class WorkoutMovement extends HTMLElement {
         this.exercise = this.shadowRoot.getElementById("exercise")
         this.sets = this.shadowRoot.getElementById("sets")
         this.reps = this.shadowRoot.getElementById("reps")
+        this.weight = this.shadowRoot.getElementById("weight")
 
         this.exercise.setAttribute("value", this.dataObject.exerciseId)
         this.sets.setAttribute("value", this.dataObject.sets)
         this.reps.setAttribute("value", this.dataObject.reps)
+        this.weight.setAttribute("value", this.dataObject.weight)
 
         //register current data with parent
         this.submitForm(null)
@@ -85,26 +90,29 @@ class WorkoutMovement extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["id", "workout-id", "exercise-id", "sets", "reps"];
+        return ["id", "workout-id", "exercise-id", "sets", "reps", "weight"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case "id":
-                this.dataObject.id = newValue
-                break
+                this.dataObject.id = newValue;
+                break;
             case "workout-id":
-                this.dataObject.workoutId = newValue
-                break
+                this.dataObject.workoutId = newValue;
+                break;
             case "exercise-id":
-                this.dataObject.exerciseId = newValue
-                break
+                this.dataObject.exerciseId = newValue;
+                break;
             case "sets":
-                this.dataObject.sets = newValue
-                break
+                this.dataObject.sets = newValue;
+                break;
             case "reps":
-                this.dataObject.reps = newValue
-                break
+                this.dataObject.reps = newValue;
+                break;
+            case "weight":
+                this.dataObject.weight = newValue;
+                break;
         }
     }
 }

@@ -13,6 +13,7 @@ type Movement struct {
 	WorkoutID  int       `json:"workoutId"`
 	Sets       int       `json:"sets"`
 	Reps       int       `json:"reps"`
+	Weight     int       `json:"weight"`
 	Date       time.Time `json:"date"`
 }
 

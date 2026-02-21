@@ -62,7 +62,7 @@ func (ws *WorkoutStore) GetWorkout(id int) ([]model.Movement, error) {
 	var movements []model.Movement
 
 	q := `
-        SELECT id, workout_id, exercise_id, sets, reps, date
+        SELECT id, workout_id, exercise_id, sets, reps, weight, date
         FROM movement
         WHERE workout_id = ?
     `
@@ -83,7 +83,7 @@ func (ws *WorkoutStore) GetWorkout(id int) ([]model.Movement, error) {
 		var m model.Movement
 		var unixInt int64
 
-		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &unixInt)
+		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &m.Weight, &unixInt)
 		m.Date = time.Unix(unixInt, 0)
 
 		if err != nil {
@@ -102,7 +102,7 @@ func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
 	var movements []model.Movement
 
 	q := `
-        SELECT id, workout_id, exercise_id, sets, reps, date
+        SELECT id, workout_id, exercise_id, sets, reps, weight, date
         FROM movement
         WHERE workout_id = (SELECT id FROM workout ORDER BY id DESC LIMIT 1)
     `
@@ -125,7 +125,7 @@ func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
 		var m model.Movement
 		var unixInt int64
 
-		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &unixInt)
+		err := rows.Scan(&m.ID, &m.WorkoutID, &m.ExerciseID, &m.Sets, &m.Reps, &m.Weight, &unixInt)
 		m.Date = time.Unix(unixInt, 0)
 
 		if err != nil {
@@ -141,7 +141,7 @@ func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
 }
 
 func (ws *WorkoutStore) AddWorkout() error {
-    //add a new workout
+	//add a new workout
 	stmt, err := ws.env.Db.Prepare("INSERT INTO workout(date) VALUES(?)")
 	if err != nil {
 		return err
@@ -162,31 +162,31 @@ func (ws *WorkoutStore) UpdateWorkout(e model.Workout) ([]model.Movement, error)
 	return movements, nil
 }
 
-//func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
+// func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
 func (ws *WorkoutStore) DeleteWorkout(id int) error {
 	//var emptyWorkouts []model.Workout
 
-    //todo: prevent deleting a workout if it's the only one
+	//todo: prevent deleting a workout if it's the only one
 	stmt, err := ws.env.Db.Prepare("DELETE FROM workout WHERE id=?")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-    _, err = stmt.Exec(id)
-
-    return err
-
-    /*
 	_, err = stmt.Exec(id)
-	if err != nil {
-		return emptyWorkouts, err
-	}
 
-	workouts := ws.GetWorkouts()
+	return err
 
-	return workouts, nil
-    */
+	/*
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return emptyWorkouts, err
+		}
+
+		workouts := ws.GetWorkouts()
+
+		return workouts, nil
+	*/
 }
 
 func (ws *WorkoutStore) GetPlaceHolderExercise() (int, error) {
@@ -220,12 +220,13 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 		ExerciseID: placeholder,
 		Sets:       3,
 		Reps:       5,
+		Weight:     10,
 		Date:       time.Now(),
 	}
 
 	q := `
         INSERT
-        INTO movement(workout_id, exercise_id, sets, reps, date)
+        INTO movement(workout_id, exercise_id, sets, reps, weight, date)
         VALUES(?,?,?,?,?)
         RETURNING id
     `
@@ -235,13 +236,13 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(m.WorkoutID, m.ExerciseID, m.Sets, m.Reps, m.Date).Scan(&id)
+	err = stmt.QueryRow(m.WorkoutID, m.ExerciseID, m.Sets, m.Reps, m.Weight, m.Date).Scan(&id)
 	if err != nil {
 		return movements, err
 	}
 
 	//get updated workout to return
-	workout,_ := ws.GetWorkout(workoutId)
+	workout, _ := ws.GetWorkout(workoutId)
 	movements = workout
 
 	return movements, nil
@@ -253,7 +254,7 @@ func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, erro
 	// update a movement
 	updateQ := `
         UPDATE movement
-        SET exercise_id=?, sets=?, reps=?
+        SET exercise_id=?, sets=?, reps=?, weight=?
         WHERE id=?
     `
 
@@ -263,7 +264,7 @@ func (ws *WorkoutStore) UpdateMovement(m model.Movement) ([]model.Movement, erro
 	}
 	defer updateStmt.Close()
 
-	_, err = updateStmt.Exec(m.ExerciseID, m.Sets, m.Reps, m.ID)
+	_, err = updateStmt.Exec(m.ExerciseID, m.Sets, m.Reps, m.Weight, m.ID)
 	if err != nil {
 		return emptyMovements, err
 	}
