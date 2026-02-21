@@ -13,12 +13,11 @@ class PartialLoader extends HTMLElement {
     endpoint = null;
 
     connectedCallback() {
-        console.log("loader connected", this.targetId, " - ", this.endpoint);
         if (this.targetId && this.endpoint) this.loadContent();
     }
 
     disconnectedCallback() {
-        console.log("loader disconnected");
+        //needed?
     }
 
     loadContent() {
@@ -29,16 +28,16 @@ class PartialLoader extends HTMLElement {
         switch(name) {
             case "target-id":
                 if (oldValue !== newValue) {
-                    this.targetId = newValue
+                    this.targetId = newValue;
                 }
                 break;
             case "endpoint":
                 if (oldValue !== newValue) {
-                    this.endpoint = newValue
+                    this.endpoint = newValue;
                 }
                 break;
         }
     }
 };
 
-customElements.define("partial-loader", PartialLoader)
+customElements.define("partial-loader", PartialLoader);

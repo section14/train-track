@@ -17,7 +17,7 @@ func NewEnv() *Env {
     env := &Env{}
     wd, _ := os.Getwd()
 
-    dbLocation := fmt.Sprintf("%s/.data/db.sqlite", wd)
+    dbLocation := fmt.Sprintf("%s/.data/db.sqlite?_fk=1", wd)
 
     db, err := sql.Open("sqlite3", dbLocation)
     if err != nil {

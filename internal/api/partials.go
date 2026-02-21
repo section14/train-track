@@ -33,9 +33,9 @@ func postRoutes(serveMux *chi.Mux, s *Server) {
 	serveMux.Delete("/exercises/{id}", s.deleteExercise)
 
 	serveMux.Post("/workouts", s.addWorkout)
+	serveMux.Delete("/workouts/{id}", s.deleteWorkout)
 	serveMux.Patch("/workouts/add/movement/{id}", s.addMovement)
 	serveMux.Patch("/workouts/{workoutId}/{movementId}", s.updateWorkout)
-	//serveMux.Delete("/workouts/delete/movement/{id}", s.deleteMovement)
     serveMux.Delete("/workouts/{workoutId}/{movementId}", s.deleteMovement)
 }
 
@@ -144,6 +144,16 @@ func (s *Server) partialWorkout(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) addWorkout(w http.ResponseWriter, r *http.Request) {
 	err := s.workout.Add()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func (s *Server) deleteWorkout(w http.ResponseWriter, r *http.Request) {
+	err := s.workout.Delete(r)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -8,11 +8,11 @@
                 <div class="title">
                     <h3 class="ms-2">Workout {{.ID}} {{.Date.Format "Jan 02, 2006 15:04 PM"}}</h3>
                     <div class="me-2">
-                        <button type="button" data-workout-id="{{.ID}}" data-workout-date="{{.Date}}">
+                        <button type="button" data-add-movement-id="{{.ID}}" data-workout-date="{{.Date}}">
                             Add Exercise
                         </button>
-                        <button type="button" data-test-id="{{.ID}}">
-                            Tester
+                        <button type="button" class="btn-delete" data-delete-workout-id="{{.ID}}">
+                            Delete Workout
                         </button>
                     </div>
                 </div>
@@ -28,12 +28,12 @@
 </div>
 
 <script>
-    import { Patch } from "/static/js/request.js"
-    import { swapDirect } from "/static/js/swap.js"
+    import { Patch, Delete } from "/static/js/request.js"
+    import { swapContent, swapDirect } from "/static/js/swap.js"
 
-    //@handle:data-workout-id:data-workout-date
+    //@handle:data-add-movement-id:data-workout-date
     export const addExerciseMovement = (e) => {
-        const id = e.workoutId
+        const id = e.addMovementId
 
         Patch("/api/workouts/add/movement", id, null)
             .then((res) => {
@@ -42,12 +42,16 @@
             .catch((err) => {
                 console.log("patch err: ", err)
             })
-        //console.log("workout id: ", e.target.dataset.workoutId);
     }
 
-    //@handle:data-test-id
-    export const addTestThingy = (e) => {
-        console.log("testes: ", e)
-        //console.log("workout id: ", e.target.dataset.workoutId);
+    //@handle:data-delete-workout-id
+    export const deleteWorkout = (id) => {
+        Delete(`/api/workouts/${id}`, id, null)
+            .then((res) => {
+                swapContent("/api/partials/workouts", "workout-list-container")
+            })
+            .catch((err) => {
+                console.log("delte err: ", err)
+            })
     }
 </script>

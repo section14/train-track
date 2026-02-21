@@ -21,7 +21,8 @@ type WorkoutManager interface {
 	DeleteMovement(id int, workoutId int) ([]model.Movement, error)
 	AddWorkout() error
 	UpdateWorkout(e model.Workout) ([]model.Movement, error)
-	DeleteWorkout(id int) ([]model.Workout, error)
+	//DeleteWorkout(id int) ([]model.Workout, error)
+	DeleteWorkout(id int) error
 }
 
 type WorkoutService struct {
@@ -44,6 +45,14 @@ func (ws *WorkoutService) Get(r *http.Request) ([]model.Movement, error) {
 
 func (ws *WorkoutService) Add() error {
 	err := ws.service.AddWorkout()
+	return err
+}
+
+func (ws *WorkoutService) Delete(r *http.Request) error {
+	idStr := r.PathValue("id")
+	id, _ := strconv.ParseInt(idStr, 10, 64)
+
+	err := ws.service.DeleteWorkout(int(id))
 	return err
 }
 

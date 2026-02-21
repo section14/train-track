@@ -141,6 +141,7 @@ func (ws *WorkoutStore) GetLastWorkout() []model.Movement {
 }
 
 func (ws *WorkoutStore) AddWorkout() error {
+    //add a new workout
 	stmt, err := ws.env.Db.Prepare("INSERT INTO workout(date) VALUES(?)")
 	if err != nil {
 		return err
@@ -161,16 +162,22 @@ func (ws *WorkoutStore) UpdateWorkout(e model.Workout) ([]model.Movement, error)
 	return movements, nil
 }
 
-func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
-	var emptyWorkouts []model.Workout
+//func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
+func (ws *WorkoutStore) DeleteWorkout(id int) error {
+	//var emptyWorkouts []model.Workout
 
     //todo: prevent deleting a workout if it's the only one
 	stmt, err := ws.env.Db.Prepare("DELETE FROM workout WHERE id=?")
 	if err != nil {
-		return emptyWorkouts, err
+		return err
 	}
 	defer stmt.Close()
 
+    _, err = stmt.Exec(id)
+
+    return err
+
+    /*
 	_, err = stmt.Exec(id)
 	if err != nil {
 		return emptyWorkouts, err
@@ -179,6 +186,7 @@ func (ws *WorkoutStore) DeleteWorkout(id int) ([]model.Workout, error) {
 	workouts := ws.GetWorkouts()
 
 	return workouts, nil
+    */
 }
 
 func (ws *WorkoutStore) GetPlaceHolderExercise() (int, error) {
