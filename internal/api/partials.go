@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -50,22 +49,7 @@ func NameIdClick(name string, id int) string {
 func (s *Server) partialExercises(w http.ResponseWriter, r *http.Request) {
 	e := s.exercise.GetAll()
 
-	funcMap := template.FuncMap{
-		"deleteClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(NameIdClick("deleteExercise", id))
-		},
-		"editClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(NameIdClick("editExercise", id))
-		},
-		"editCancel": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(NameIdClick("editExerciseCancel", id))
-		},
-		"patchClick": func(id int) template.HTMLAttr {
-			return template.HTMLAttr(NameIdClick("patchListener", id))
-		},
-	}
-
-	err := s.tpls.Funcs(funcMap).ExecuteTemplate(w, "partials/exercise-list.html", e)
+	err := s.tpls.ExecuteTemplate(w, "partials/exercise-list.html", e)
 	if err != nil {
 		fmt.Println("couldn't open exercise list partial", err)
 	}

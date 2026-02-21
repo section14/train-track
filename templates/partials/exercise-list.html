@@ -11,19 +11,19 @@
                 </form>
             </div>
             <div id="item-buttons-{{.ID}}" class="item-buttons show">
-                <button id="ex-{{.ID}}" type="button" {{editClick .ID}} class="btn-edit ms-3">
+                <button data-ex-edit-id="{{.ID}}" type="button"  class="btn-edit ms-3">
                     Edit
                 </button>
-                <button id="ex-{{.ID}}" type="button" {{deleteClick .ID}} class="btn-delete ms-3">
+                <button data-ex-delete-id="{{.ID}}" type="button" class="btn-delete ms-3">
                     Delete
                 </button>
             </div>
 
             <div id="item-edit-buttons-{{.ID}}" class="item-edit-buttons hide">
-                <button id="edit-cancel-{{.ID}}" type="button" {{editCancel .ID}} class="btn-edit ms-3">
+                <button data-ex-edit-cancel-id="{{.ID}}" type="button" class="btn-edit ms-3">
                     Cancel
                 </button>
-                <button type="button" class="btn-save" {{patchClick .ID}}>
+                <button data-ex-save-id="{{.ID}}" type="button" class="btn-save">
                     Save
                 </button>
             </div>
@@ -37,7 +37,8 @@
     import { Delete, PatchForm } from '/static/js/request.js'
     import { swapContent } from '/static/js/swap.js'
 
-    const deleteExercise = (id) => {
+    //@handle:data-ex-delete-id
+    export const deleteExercise = (id) => {
         Delete(`/api/exercises/${id}`).then((res) => {
             swapContent("/api/partials/exercises", "exercise-list-container")
         }).catch((err) => {
@@ -45,7 +46,8 @@
         })
     }
 
-    const editExercise = (id) => {
+    //@handle:data-ex-edit-id
+    export const editExercise = (id) => {
         const itemRow = document.getElementById(`item-row-${id}`)
         const itemName = document.getElementById(`item-name-${id}`)
         const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
@@ -67,7 +69,8 @@
         itemEditButtons.classList.add("show")
     }
 
-    const editExerciseCancel = (id) => {
+    //@handle:data-ex-edit-cancel-id
+    export const editExerciseCancel = (id) => {
         const itemRow = document.getElementById(`item-row-${id}`)
         const itemName = document.getElementById(`item-name-${id}`)
         const itemNameEdit = document.getElementById(`item-name-edit-${id}`)
@@ -89,7 +92,8 @@
         itemEditButtons.classList.add("hide")
     }
 
-    const patchListener = (id) => {
+    //@handle:data-ex-save-id
+    export const patchListener = (id) => {
         const editExerciseForm = document.getElementById(`edit-exercise-form-${id}`)
         PatchForm("/api/exercises", id, editExerciseForm).then((res) => {
             //update list

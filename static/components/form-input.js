@@ -74,7 +74,9 @@ class FormInput extends HTMLElement {
 
     valueChanged(value) {
         this.dataObject.value = value;
-        this.inputField.setAttribute("value", value)
+        if (this.inputField) {
+            this.inputField.setAttribute("value", value);
+        }
     }
 
     labelChanged(value) {
@@ -104,7 +106,7 @@ class FormInput extends HTMLElement {
             case "value":
                 this.valueChanged(newValue);
                 if (this.internals) {
-                    this.internals.setFormValue(newValue)
+                    this.internals.setFormValue(newValue);
                 }
                 break;
             case "label":
