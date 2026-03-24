@@ -148,6 +148,8 @@ func (s *Server) deleteWorkout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) addMovement(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("called")
+
 	wo, err := s.workout.AddMovement(r)
 
 	if err != nil {

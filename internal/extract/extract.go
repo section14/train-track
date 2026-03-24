@@ -281,9 +281,9 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	//beginning of function
 	builder.WriteString("const globalClickHandler = (e) => {\n")
-	builder.WriteString("    const dataSet = e.target.dataset;\n")
-	builder.WriteString("    const key = Object.keys(dataSet)[0];\n\n")
 	builder.WriteString("    const button = e.target.closest(\"button\");\n\n")
+	builder.WriteString("    const dataSet = button.dataset;\n")
+	builder.WriteString("    const key = Object.keys(button.dataset)[0];\n\n")
 	builder.WriteString("    if (button) {\n")
 	builder.WriteString("        switch (key) {\n")
 

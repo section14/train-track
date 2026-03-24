@@ -16,11 +16,14 @@
     const workoutMovements = {}
 
     const updateWorkout = (e) => {
-        const w = e.detail;
+        const {movement: w, callback} = e.detail;
         workoutMovements[w["id"]] = w;
 
         Patch(`/api/workouts/${w["workoutId"]}`, w["id"], w).then((res) => {
-            swapContent(`/api/partials/workouts/${w["workoutId"]}`, `workout-${w["workoutId"]}`)
+            //stop a "saving" indicator here
+            callback()
+
+            //swapContent(`/api/partials/workouts/${w["workoutId"]}`, `workout-${w["workoutId"]}`)
         }).catch((err) => {
             console.log("error patching movement", err);
         })

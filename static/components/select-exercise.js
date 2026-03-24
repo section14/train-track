@@ -26,6 +26,13 @@ class SelectExercise extends HTMLElement {
 
     updateForm(e) {
         this.internals.setFormValue(e.target.value);
+
+        const event = new CustomEvent('movement-update', {
+            detail: "",
+            bubbles: true,
+            cancelable: true,
+        })
+        this.internals.form.dispatchEvent(event)
     }
 
     connectedCallback() {
