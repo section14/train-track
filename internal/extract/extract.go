@@ -274,6 +274,7 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 		nameBuilder.WriteString("\n")
 	}
 
+    nameBuilder.WriteString("import { toggleHandler } from \"/static/js/handlers.js\"")
 	nameBuilder.WriteString("\n")
 	builder.WriteString(nameBuilder.String())
 }
@@ -300,6 +301,10 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 //build switch case in main.js click handler
 func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 	var switchBuilder strings.Builder
+
+    switchBuilder.WriteString("            case \"toggleWorkout\":\n ")
+	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleHandler"))
+	switchBuilder.WriteString("                break;\n")
 
 	for funcName, cases := range dataToFuncMap {
 		for _, caseName := range cases {

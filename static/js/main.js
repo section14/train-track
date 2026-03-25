@@ -19,10 +19,8 @@ const movementChanged = (e) => {
         addMovement.disabled = true;
         delMovement.disabled = true;
     } else {
-
         addMovement.disabled = false;
         delMovement.disabled = false;
-
     }
 }
 

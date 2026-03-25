@@ -5,41 +5,78 @@
         <ul>
             {{range .}}
             <li>
-                <div class="title">
-                    <div class="title-group">
-                        <div class="workout-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
-                                <path
-                                    d="m826-585-56-56 30-31-128-128-31 30-57-57 30-31q23-23 57-22.5t57 23.5l129 129q23 23 23 56.5T857-615l-31 30ZM346-104q-23 23-56.5 23T233-104L104-233q-23-23-23-56.5t23-56.5l30-30 57 57-31 30 129 129 30-31 57 57-30 30Zm397-336 57-57-303-303-57 57 303 303ZM463-160l57-58-302-302-58 57 303 303Zm-6-234 110-109-64-64-109 110 63 63Zm63 290q-23 23-57 23t-57-23L104-406q-23-23-23-57t23-57l57-57q23-23 56.5-23t56.5 23l63 63 110-110-63-62q-23-23-23-57t23-57l57-57q23-23 56.5-23t56.5 23l303 303q23 23 23 56.5T857-441l-57 57q-23 23-57 23t-57-23l-62-63-110 110 63 63q23 23 23 56.5T577-161l-57 57Z" />
-                            </svg>
+                <section>
+                    <div class="title">
+                        <div class="title-group">
+                            <div class="workout-icon">
+                                <button
+                                    id="collapse-movement-{{.ID}}"
+                                    type="button"
+                                    class="btn-collapse me-2"
+                                    data-toggle-workout="{{.ID}}"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 -960 960 960"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            d="m826-585-56-56 30-31-128-128-31 30-57-57 30-31q23-23 57-22.5t57 23.5l129 129q23 23 23 56.5T857-615l-31 30ZM346-104q-23 23-56.5 23T233-104L104-233q-23-23-23-56.5t23-56.5l30-30 57 57-31 30 129 129 30-31 57 57-30 30Zm397-336 57-57-303-303-57 57 303 303ZM463-160l57-58-302-302-58 57 303 303Zm-6-234 110-109-64-64-109 110 63 63Zm63 290q-23 23-57 23t-57-23L104-406q-23-23-23-57t23-57l57-57q23-23 56.5-23t56.5 23l63 63 110-110-63-62q-23-23-23-57t23-57l57-57q23-23 56.5-23t56.5 23l303 303q23 23 23 56.5T857-441l-57 57q-23 23-57 23t-57-23l-62-63-110 110 63 63q23 23 23 56.5T577-161l-57 57Z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <h3 class="ms-2">{{.Date.Format "Jan 02, 2006 15:04 PM"}}</h3>
                         </div>
-                        <h3 class="ms-3">{{.Date.Format "Jan 02, 2006 15:04 PM"}}</h3>
+                        <div class="workout-buttons">
+                            <button
+                                id="add-movement-{{.ID}}"
+                                type="button"
+                                class="btn-add me-2"
+                                data-add-movement-id="{{.ID}}"
+                                data-workout-date="{{.Date}}"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 -960 960 960"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                id="delete-movement-{{.ID}}"
+                                type="button"
+                                class="btn-delete"
+                                data-delete-workout-id="{{.ID}}"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 -960 960 960"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="workout-buttons me-2">
-                        <button
-                            id="add-movement-{{.ID}}"
-                            type="button" class="btn-add me-2"
-                            data-add-movement-id="{{.ID}}"
-                            data-workout-date="{{.Date}}">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
-                                <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-                            </svg>
-                        </button>
-                        <button
-                            id="delete-movement-{{.ID}}"
-                            type="button"
-                            class="btn-delete"
-                            data-delete-workout-id="{{.ID}}">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
-                                <path
-                                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                            </svg>
-                        </button>
+                    <partial-loader
+                        target-id="workout-{{.ID}}"
+                        endpoint="/api/partials/workouts/{{.ID}}"
+                    >
+                    </partial-loader>
+                    <div id="collapse-{{.ID}}" class="collapse-wrapper show">
+                        <div
+                            id="workout-{{.ID}}"
+                            class="collapse-content"
+                            style="display: flex; flex-direction: column; gap: 0.5rem;"
+                        ></div>
                     </div>
-                </div>
-                <partial-loader target-id="workout-{{.ID}}" endpoint="/api/partials/workouts/{{.ID}}">
-                </partial-loader>
-                <div id="workout-{{.ID}}" style="display: flex; flex-direction: column"></div>
+                </section>
             </li>
             {{end}}
         </ul>
@@ -47,8 +84,8 @@
 </div>
 
 <script>
-    import {Patch, Delete} from "/static/js/request.js";
-    import {swapContent, swapDirect} from "/static/js/swap.js";
+    import { Patch, Delete } from "/static/js/request.js";
+    import { swapContent, swapDirect } from "/static/js/swap.js";
 
     //@handle:data-add-movement-id:data-workout-date
     export const addExerciseMovement = (e) => {
