@@ -56,7 +56,6 @@ export const Patch = (url, id, data) => {
 }
 
 export const PatchForm = (url, id, data) => {
-    console.log("data: ", data)
     return new Promise((resolve, reject) => {
         fetch(`${url}/${id}`, { method: "PATCH", body: new FormData(data) }).then((response) => {
             if (!response.ok) {

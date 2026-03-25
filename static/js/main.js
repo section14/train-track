@@ -1,7 +1,6 @@
 globalThis.docLoaded = false;
 
 window.onload = function() {
-    console.log("loaded");
     globalThis.docLoaded = true;
 }
 
@@ -24,6 +23,6 @@ const movementChanged = (e) => {
     }
 }
 
-const el = document.querySelectorAll("div[data-div-load]");
-document.addEventListener("change", divOnLoad);
+//const el = document.querySelectorAll("div[data-div-load]");
+//document.addEventListener("change", divOnLoad);
 document.addEventListener("movement-changed", movementChanged)

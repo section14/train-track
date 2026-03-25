@@ -19,6 +19,7 @@ class FormInput extends HTMLElement {
     //input field refs
     inputField;
     labelElem;
+    style = "";
 
     //component state
     dataObject = {
@@ -33,14 +34,14 @@ class FormInput extends HTMLElement {
     static formAssociated = true;
 
     updateForm(e) {
-        this.internals.setFormValue(e.target.value)
+        this.internals.setFormValue(e.target.value);
 
-        const event = new CustomEvent('movement-update', {
+        const event = new CustomEvent("movement-update", {
             detail: "",
             bubbles: true,
             cancelable: true,
-        })
-        this.internals.form.dispatchEvent(event)
+        });
+        this.internals.form.dispatchEvent(event);
     }
 
     connectedCallback() {
@@ -49,11 +50,12 @@ class FormInput extends HTMLElement {
         this.inputField.name = this.dataObject.name;
         this.inputField.type = this.dataObject.type;
         this.inputField.placeholder = this.dataObject.placeholder;
+        this.inputField.setAttribute("style", this.style);
 
         this.internals.setFormValue(this.dataObject.value);
 
         //listen for changes
-        this.inputField.addEventListener("input", this.updateForm.bind(this))
+        this.inputField.addEventListener("input", this.updateForm.bind(this));
 
         //label
         this.labelElem = this.shadowRoot.querySelector("label");
@@ -63,11 +65,11 @@ class FormInput extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.inputField.removeEventListener("change", this.updateForm.bind(this))
+        this.inputField.removeEventListener("change", this.updateForm.bind(this));
     }
 
     static get observedAttributes() {
-        return ["name", "type", "value", "label", "placeholder", "error-message"];
+        return ["name", "type", "value", "label", "placeholder", "style", "error-message"];
     }
 
     //these methods update when the component attributes are changed from a parent
@@ -94,7 +96,14 @@ class FormInput extends HTMLElement {
         this.dataObject.placeholder = value;
     }
 
-    errorChanged(error) { }
+    styleChanged(value) {
+        this.style = value;
+        if (this.inputField) {
+            this.inputField.setAttribute("style", value);
+        }
+    }
+
+    errorChanged(error) {}
 
     /**
      * Runs when the value of an attribute is changed on the component
@@ -122,6 +131,9 @@ class FormInput extends HTMLElement {
             case "placeholder":
                 this.placeholderChanged(newValue);
                 break;
+            case "style":
+                this.styleChanged(newValue);
+                break;
             case "error-message":
                 this.errorChanged(newValue);
                 break;
@@ -129,6 +141,6 @@ class FormInput extends HTMLElement {
                 console.log("unknown attribute: ", name);
         }
     }
-};
+}
 
 customElements.define("form-input", FormInput);

@@ -1,4 +1,4 @@
-<div id="widget-list" class="exercise-list bg-med p-3">
+<div id="widget-list" class="exercise-list p-3">
     <ul>
         {{range .}}
         <li id="item-row-{{.ID}}">
@@ -11,20 +11,20 @@
                 </form>
             </div>
             <div id="item-buttons-{{.ID}}" class="item-buttons show">
-                <button data-ex-edit-id="{{.ID}}" type="button"  class="btn-edit ms-3">
-                    Edit
+                <button data-ex-edit-id="{{.ID}}" type="button"  class="btn-edit">
+                    <svg-icon icon="edit"></svg-icon>
                 </button>
-                <button data-ex-delete-id="{{.ID}}" type="button" class="btn-delete ms-3">
-                    Delete
+                <button data-ex-delete-id="{{.ID}}" type="button" class="btn-delete alt ms-2">
+                    <svg-icon icon="remove"></svg-icon>
                 </button>
             </div>
 
             <div id="item-edit-buttons-{{.ID}}" class="item-edit-buttons hide">
-                <button data-ex-edit-cancel-id="{{.ID}}" type="button" class="btn-edit ms-3">
-                    Cancel
+                <button data-ex-edit-cancel-id="{{.ID}}" type="button" class="btn-edit">
+                    <svg-icon icon="cancel"></svg-icon>
                 </button>
-                <button data-ex-save-id="{{.ID}}" type="button" class="btn-save">
-                    Save
+                <button data-ex-save-id="{{.ID}}" type="button" class="btn-save ms-2">
+                    <svg-icon icon="save"></svg-icon>
                 </button>
             </div>
 
@@ -41,6 +41,14 @@
     export const deleteExercise = (id) => {
         Delete(`/api/exercises/${id}`).then((res) => {
             swapContent("/api/partials/exercises", "exercise-list-container")
+
+            // tell workout movements to update their exercise list
+            const event = new CustomEvent("exercise-added", {
+                detail: "",
+                bubbles: true,
+                cancelable: true,
+            })
+            document.dispatchEvent(event);
         }).catch((err) => {
             console.log("delete err: ", err)
         })
@@ -96,8 +104,16 @@
     export const patchListener = (id) => {
         const editExerciseForm = document.getElementById(`edit-exercise-form-${id}`)
         PatchForm("/api/exercises", id, editExerciseForm).then((res) => {
-            //update list
+            // update list
             swapContent("/api/partials/exercises", "exercise-list-container")
+
+            // tell workout movements to update their exercise list
+            const event = new CustomEvent("exercise-added", {
+                detail: "",
+                bubbles: true,
+                cancelable: true,
+            })
+            document.dispatchEvent(event);
         }).catch((err) => {
             console.log("post err", err)
         })

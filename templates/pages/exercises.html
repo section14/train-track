@@ -1,6 +1,9 @@
+<!-- prettier-ignore-start -->
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
 {{ template "form-input.html" }}
+{{ template "svg-icon.html" }}
+<!-- prettier-ignore-end -->
 <div id="exercise-page" class="layout page-exercises">
     <div>
         You are at exercises
@@ -31,8 +34,16 @@
         e.preventDefault()
         const addExerciseForm = document.getElementById("add-exercise-form")
         PostForm("/api/exercises", addExerciseForm).then((res) => {
-            //update list
+            // update list
             swapContent("/api/partials/exercises", "exercise-list-container")
+
+            // tell workout movements to update their exercise list
+            const event = new CustomEvent("exercise-added", {
+                detail: "",
+                bubbles: true,
+                cancelable: true,
+            })
+            document.dispatchEvent(event);
         }).catch((err) => {
             console.log("post err", err)
         })
