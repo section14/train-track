@@ -82,6 +82,8 @@ form-input::part(input-field)::placeholder {
 
 /* end shadow dom -------------------------------------- */
 
+/* element styles -------------------------------------- */
+
 input {
     background-color: var(--light);
     padding: 0.25rem 0.5rem;
@@ -130,7 +132,29 @@ button:hover {
     background-color: oklch(from var(--primary) calc(l + 0.2) c h);
 }
 
-/* end element styles */
+/* end element styles ---------------------------------- */
+
+/* ui helper styles ------------------------------------ */
+
+.collapse-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: all 0.35s ease;
+}
+
+.collapse-wrapper.show {
+    grid-template-rows: 1fr;
+    opacity: 100%;
+}
+
+.collapse-content {
+    overflow: hidden;
+}
+
+/* end ui helper styles -------------------------------- */
+
+
 
 /* buttons --------------------------------------------- */
 .btn-secondary {
@@ -147,6 +171,24 @@ button:hover {
 
 .btn-save:hover {
     background-color: oklch(from var(--primary) calc(l - 0.08) c h);
+}
+
+.btn-collapse {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    color: oklch(from var(--dark) calc(l - 0.1) c h);
+    background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+
+    & svg {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+.btn-collapse:hover {
+    color: var(--dark);
+    background-color: var(--primary);
 }
 
 .btn-add {
@@ -316,8 +358,6 @@ button:hover {
             align-items: center;
             justify-content: center;
             color: var(--primary);
-            width: 2rem;
-            height: 2rem;
         }
     }
 
