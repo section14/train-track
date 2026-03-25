@@ -227,7 +227,7 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 	q := `
         INSERT
         INTO movement(workout_id, exercise_id, sets, reps, weight, date)
-        VALUES(?,?,?,?,?)
+        VALUES(?,?,?,?,?,?)
         RETURNING id
     `
 	stmt, err := ws.env.Db.Prepare(q)

@@ -16,12 +16,22 @@
         }
 
         button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: inherit;
-            color: var(--dark);
-            padding: 0.5rem;
-            background-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--med);
             border: none;
             border-radius: 0.375rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            transition: color 0.25s ease, background-color 0.25s ease;
+
+            & svg {
+                width: 2rem;
+                height: 2rem;
+            }
         }
 
         button:focus {
@@ -30,16 +40,23 @@
 
         button:hover {
             cursor: pointer;
-            background-color: oklch(from var(--primary) calc(l - 0.08) c h);
+            background-color: oklch(from var(--primary) calc(l + 0.2) c h);
         }
 
         .btn-delete {
-            color: var(--med-light);
+            color: var(--med-400);
             background-color: var(--dark);
         }
 
         .btn-delete:hover {
+            color: oklch(from var(--danger) calc(l + 0.2) c h);
             background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+        }
+
+        .btn-delete:disabled {
+            cursor: not-allowed;
+            color: oklch(from var(--dark) calc(l + 0.1) c h);
+            background-color: oklch(from var(--dark) calc(l - 0.08) c h);
         }
     </style>
 
@@ -48,7 +65,12 @@
         <form-input id="sets" name="sets" type="number" placeholder="Enter Sets"></form-input>
         <form-input id="reps" name="reps" type="number" placeholder="Enter Reps"></form-input>
         <form-input id="weight" name="weight" type="number" placeholder="Enter Weight"></form-input>
-        <button type="submit">Save</button>
-        <button id="delete-mvmt" type="button" class="btn-delete">Delete</button>
+        <save-indicator id="saver"></save-indicator>
+        <button id="delete-mvmt" type="button" class="btn-delete">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                <path
+                    d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+            </svg>
+        </button>
     </form>
 </template>

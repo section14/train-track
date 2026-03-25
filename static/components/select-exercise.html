@@ -1,9 +1,11 @@
 <template id="select-exercise-template">
     <style>
         select {
-            padding: 0.25rem 0.5rem;
+            padding: 0.45rem 0.5rem;
             line-height: 1.5;
-            border: 1px solid var(--light);
+            color: var(--light);
+            background-color: var(--dark);
+            border: 2px solid oklch(from var(--dark) calc(l + 0.45) c h);
             border-radius: 0.25rem;
         }
     </style>

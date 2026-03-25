@@ -1,3 +1,26 @@
+export const debounce = (waitTime) => {
+    let timeout = null;
+
+    /**
+     * @param {() => void} func
+     */
+    const caller = (func) => {
+        const later = () => {
+            clearTimeout(timeout);
+            func();
+        };
+
+        clearTimeout(timeout);
+        timeout = setTimeout(later, waitTime);
+    };
+
+    caller.cancel = () => {
+        clearTimeout(timeout);
+    };
+
+    return caller;
+};
+
 class WorkoutMovement extends HTMLElement {
     constructor() {
         super();
@@ -16,21 +39,44 @@ class WorkoutMovement extends HTMLElement {
         sets: 0,
         reps: 0,
         weight: 0,
-    }
+    };
 
+    saving = false;
+    debouncer = debounce(2000);
     movementForm;
     exercise;
     sets;
     reps;
     weight;
 
+    submitDone = () => {
+        this.saving = false;
+
+        const event = new CustomEvent("change-status", {
+            detail: { saving: false },
+            bubbles: true,
+            cancelable: true,
+        });
+
+        const mEvent = new CustomEvent("movement-changed", {
+            detail: { id: this.dataObject.workoutId, saving: false },
+            bubbles: true,
+            cancelable: true,
+        });
+        document.dispatchEvent(mEvent);
+
+        this.saver.dispatchEvent(event);
+        this.deleteBtn.disabled = false;
+    };
+
     submitForm = (e) => {
-        if (!e) return
+        if (!e) return;
         if (e) e.preventDefault();
+        this.debouncer.cancel();
         const formData = new FormData(this.movementForm);
 
         let entries = {};
-        for (var [key, value] of formData.entries()) {
+        for (const [key, value] of formData.entries()) {
             entries[key] = value;
         }
 
@@ -41,52 +87,82 @@ class WorkoutMovement extends HTMLElement {
             sets: parseInt(entries["sets"]),
             reps: parseInt(entries["reps"]),
             weight: parseInt(entries["weight"]),
-        }
+        };
 
         const event = new CustomEvent("update-workout", {
-            detail: mObj,
+            detail: { movement: mObj, callback: () => this.submitDone() },
             bubbles: true,
             cancelable: true,
-        })
-        document.dispatchEvent(event)
-    }
+        });
+        document.dispatchEvent(event);
+    };
 
     deleteMovement = () => {
         const event = new CustomEvent("delete-movement", {
             detail: { id: this.dataObject.id, workoutId: this.dataObject.workoutId },
             bubbles: true,
             cancelable: true,
-        })
-        document.dispatchEvent(event)
+        });
+        document.dispatchEvent(event);
+    };
+
+    movementUpdate(e) {
+        //start a saving indicator here
+        if (!this.saving) {
+            const event = new CustomEvent("change-status", {
+                detail: { saving: true },
+                bubbles: true,
+                cancelable: true,
+            });
+
+            console.log("ii", this.dataObject.id)
+
+            const mEvent = new CustomEvent("movement-changed", {
+                detail: { id: this.dataObject.workoutId, saving: true },
+                bubbles: true,
+                cancelable: true,
+            });
+            document.dispatchEvent(mEvent);
+
+            this.deleteBtn.disabled = true;
+            this.saver.dispatchEvent(event);
+        }
+        this.saving = true;
+        this.debouncer(() => this.submitForm(e));
     }
 
     connectedCallback() {
-        //form submit listener
-        this.movementForm = this.shadowRoot.getElementById("movement-form")
-        this.movementForm.addEventListener("submit", this.submitForm.bind(this))
+        // form submit listener
+        this.movementForm = this.shadowRoot.getElementById("movement-form");
+        this.movementForm.addEventListener("submit", this.submitForm.bind(this));
+        this.movementForm.addEventListener("movement-update", this.movementUpdate.bind(this));
 
-        //delete listener
-        this.deleteBtn = this.shadowRoot.getElementById("delete-mvmt")
-        this.deleteBtn.addEventListener("click", this.deleteMovement.bind(this))
+        // delete listener
+        this.deleteBtn = this.shadowRoot.getElementById("delete-mvmt");
+        this.deleteBtn.addEventListener("click", this.deleteMovement.bind(this));
 
-        //child element refs -- set defaults
-        this.exercise = this.shadowRoot.getElementById("exercise")
-        this.sets = this.shadowRoot.getElementById("sets")
-        this.reps = this.shadowRoot.getElementById("reps")
-        this.weight = this.shadowRoot.getElementById("weight")
+        // save indicator
+        this.saver = this.shadowRoot.getElementById("saver");
 
-        this.exercise.setAttribute("value", this.dataObject.exerciseId)
-        this.sets.setAttribute("value", this.dataObject.sets)
-        this.reps.setAttribute("value", this.dataObject.reps)
-        this.weight.setAttribute("value", this.dataObject.weight)
+        // child element refs -- set defaults
+        this.exercise = this.shadowRoot.getElementById("exercise");
+        this.sets = this.shadowRoot.getElementById("sets");
+        this.reps = this.shadowRoot.getElementById("reps");
+        this.weight = this.shadowRoot.getElementById("weight");
 
-        //register current data with parent
-        this.submitForm(null)
+        this.exercise.setAttribute("value", this.dataObject.exerciseId);
+        this.sets.setAttribute("value", this.dataObject.sets);
+        this.reps.setAttribute("value", this.dataObject.reps);
+        this.weight.setAttribute("value", this.dataObject.weight);
+
+        // register current data with parent
+        this.submitForm(null);
     }
 
     disconnectedCallback() {
-        this.movementForm.removeEventListener("submit", this.submitForm.bind(this))
-        this.deleteBtn.removeEventListener("click", this.deleteMovement.bind(this))
+        this.movementForm.removeEventListener("submit", this.submitForm.bind(this));
+        this.movementForm.removeEventListener("movement-update", this.movementUpdate.bind(this));
+        this.deleteBtn.removeEventListener("click", this.deleteMovement.bind(this));
     }
 
     static get observedAttributes() {

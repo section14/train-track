@@ -2,21 +2,22 @@
     <style>
         input {
             font-size: inherit;
-            background-color: var(--light);
+            color: var(--light);
+            background-color: var(--dark);
             padding: 0.25rem 0.5rem;
             line-height: 1.5;
-            border: 2px solid var(--dark);
+            border: 2px solid oklch(from var(--dark) calc(l + 0.2) c h);
             border-radius: 0.25rem;
         }
 
         input:focus {
             outline: none;
-            border-color: var(--dark);
-            background-color: oklch(from var(--light) l calc(c + 0.04) h);
+            border: 2px solid oklch(from var(--dark) calc(l + 0.3) c h);
+            background-color: oklch(from var(--dark) calc(l + 0.08) c h);
         }
 
         input::placeholder {
-            color: oklch(from var(--med) calc(l + 0.08) c h);
+            color: oklch(from var(--med) calc(l - 0.08) c h);
         }
     </style>
 

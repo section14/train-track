@@ -34,6 +34,13 @@ class FormInput extends HTMLElement {
 
     updateForm(e) {
         this.internals.setFormValue(e.target.value)
+
+        const event = new CustomEvent('movement-update', {
+            detail: "",
+            bubbles: true,
+            cancelable: true,
+        })
+        this.internals.form.dispatchEvent(event)
     }
 
     connectedCallback() {
@@ -46,7 +53,7 @@ class FormInput extends HTMLElement {
         this.internals.setFormValue(this.dataObject.value);
 
         //listen for changes
-        this.inputField.addEventListener("change", this.updateForm.bind(this))
+        this.inputField.addEventListener("input", this.updateForm.bind(this))
 
         //label
         this.labelElem = this.shadowRoot.querySelector("label");

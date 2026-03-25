@@ -319,7 +319,7 @@ func Serve(mux *chi.Mux, t *template.Template) {
 	handlers(mux, server)
 
 	//addr := fmt.Sprintf("%s:%s", env.Location, env.Port)
-	addr := fmt.Sprintf("%s:%s", "localhost", "8080")
+	addr := fmt.Sprintf("%s:%s", "localhost", "8082")
 
 	s := &http.Server{
 		Addr:    addr,
@@ -327,6 +327,6 @@ func Serve(mux *chi.Mux, t *template.Template) {
 		// other settings omitted
 	}
 
-	fmt.Println("serving on localhost:8080...")
+	fmt.Println("serving on localhost:8082...")
 	log.Fatal(s.ListenAndServe())
 }
