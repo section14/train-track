@@ -313,10 +313,27 @@ into html. Maybe just make a web component
 
 .page-workouts {
     display: grid;
-    grid-template-columns: minmax(856px, 1.7fr) 1fr;
+    grid-template-columns: minmax(656px, 1.7fr) 1fr;
     grid-template-rows: 1fr;
+    grid-template-areas: "w e";
     gap: var(--spacing-4);
     background-color: var(--dark);
+
+    & .workout-area {
+        grid-area: w;
+    }
+
+    & .exercise-area {
+        grid-area: e;
+    }
+}
+
+@media(width < 1100px) {
+    .page-workouts {
+        grid-template-columns: 1fr;
+        grid-template-rows: min-content 1fr;
+        grid-template-areas: "e" "w";
+    }
 }
 
 /* widgets --------------------------------------------- */
@@ -447,6 +464,24 @@ into html. Maybe just make a web component
         & .workout-buttons {
             display: flex;
             align-items: center;
+        }
+    }
+
+    & .movements {
+        & .headings {
+            display: grid;
+            flex: 1 1 100%;
+            align-items: center;
+            gap: var(--spacing-2);
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr min-content min-content;
+        }
+
+        & .content {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 100%;
+            gap: var(--spacing-2);
         }
     }
 }

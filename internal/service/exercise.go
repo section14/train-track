@@ -2,6 +2,8 @@ package service
 
 import (
 	//"fmt"
+	"errors"
+	"strings"
 
 	"encoding/json"
 
@@ -41,6 +43,10 @@ func (es *ExerciseService) GetAllJson() []byte {
 }
 
 func (es *ExerciseService) Add(name string) error {
+    if strings.Trim(name, " ") == "" {
+        return errors.New("Empty exercise name provided")
+    }
+
     e := model.Exercise {
         ID: 0,
         Name: name,

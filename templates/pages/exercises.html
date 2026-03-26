@@ -1,28 +1,39 @@
 <!-- prettier-ignore-start -->
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
+<!-- prettier-ignore-end -->
+
+<div id="exercise-page" class="layout page-exercises">
+    <h1>Add New Exercise</h1>
+
+    <section class="widget-section">
+        <form id="add-exercise-form" style="
+            display: grid;
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr min-content;
+            align-items: center;
+            justify-content: end;">
+                <span class="me-3">
+                <form-input
+                    name="name"
+                    style="width: 100%;"
+                    placeholder="Add An Exercise..."
+                    value=""></form-input>
+                </span>
+                <button type="submit" class="btn-add ms-3" style="width: 2.25rem; height: 2.25rem;">
+                    <svg-icon icon="add"></svg-icon>
+                </button>
+        </form>
+        <div id="exercise-list-container"></div>
+    </section>
+
+</div>
+
+<!-- prettier-ignore-start -->
+{{ template "foot.html" .}}
 {{ template "form-input.html" }}
 {{ template "svg-icon.html" }}
 <!-- prettier-ignore-end -->
-<div id="exercise-page" class="layout page-exercises">
-    <div>
-        You are at exercises
-    </div>
-
-    <h2>Add New Exercise</h2>
-    <form id="add-exercise-form">
-        <div class="mb-2" style="display: inline-flex;">
-            <form-input name="name" placeholder="Enter An Exercise..." value=""></form-input>
-            <button type="submit" class="btn-save ms-3">
-                Save
-            </button>
-        </div>
-    </form>
-
-    <div id="exercise-list-container"></div>
-
-</div>
-{{ template "foot.html" .}}
 
 <script>
     import { PostForm } from '/static/js/request.js'

@@ -1,6 +1,16 @@
 <template id="form-input-template">
     <style>
+        :host {
+            display: flex;
+            flex: 1 1 100%;
+            min-width: 0;
+        }
+
+        .omg{}
+
         input {
+            flex: 1 1 100%;
+            min-width: 0;
             font-size: inherit;
             color: var(--light);
             background-color: var(--dark);
@@ -8,6 +18,10 @@
             line-height: 1.5;
             border: 2px solid oklch(from var(--dark) calc(l + 0.2) c h);
             border-radius: 0.25rem;
+        }
+
+        input::after {
+            content: "img"
         }
 
         input:focus {
