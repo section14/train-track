@@ -85,17 +85,18 @@ form-input::part(input-field)::placeholder {
 /* element styles -------------------------------------- */
 
 input {
-    background-color: var(--light);
+    color: var(--light);
+    background-color: var(--dark);
     padding: 0.25rem 0.5rem;
     line-height: 1.5;
-    border: 2px solid var(--dark);
+    border: 2px solid oklch(from var(--dark) calc(l + 0.2) c h);
     border-radius: 0.25rem;
 }
 
 input:focus {
     outline: none;
-    border-color: var(--dark);
-    background-color: oklch(from var(--light) l calc(c + 0.04) h);
+    border: 2px solid oklch(from var(--dark) calc(l + 0.3) c h);
+    background-color: oklch(from var(--dark) calc(l + 0.08) c h);
 }
 
 input::placeholder {
@@ -149,12 +150,10 @@ button:hover {
 }
 
 .collapse-content {
-    overflow: hidden;
+    overflow-y: hidden;
 }
 
 /* end ui helper styles -------------------------------- */
-
-
 
 /* buttons --------------------------------------------- */
 .btn-secondary {
@@ -166,7 +165,15 @@ button:hover {
 }
 
 .btn-save {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
     background-color: var(--primary);
+
+    & svg {
+        width: 2rem;
+        height: 2rem;
+    }
 }
 
 .btn-save:hover {
@@ -210,7 +217,7 @@ button:hover {
 }
 
 .btn-add:disabled {
-    cursor:not-allowed;
+    cursor: not-allowed;
     color: oklch(from var(--dark) calc(l + 0.1) c h);
     background-color: oklch(from var(--dark) calc(l - 0.08) c h);
 }
@@ -221,6 +228,16 @@ button:hover {
     padding: 0;
     color: oklch(from var(--danger) calc(l + 0.2) c h);
     background-color: var(--dark);
+
+    &.alt {
+        color: var(--med-400);
+        background-color: var(--dark);
+
+        &:hover {
+            color: oklch(from var(--danger) calc(l + 0.2) c h);
+            background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+        }
+    }
 
     & svg {
         width: 2rem;
@@ -234,18 +251,34 @@ button:hover {
 }
 
 .btn-delete:disabled {
-    cursor:not-allowed;
+    cursor: not-allowed;
     color: oklch(from var(--dark) calc(l + 0.1) c h);
     background-color: oklch(from var(--dark) calc(l - 0.08) c h);
 }
 
 .btn-edit {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    color: var(--med-400);
+    background-color: var(--dark);
+    /*
     color: var(--dark);
-    background-color: var(--med);
+    background-color: oklch(from var(--dark) calc(l + 0.18) c h);
+    */
+
+    & svg {
+        width: 2rem;
+        height: 2rem;
+    }
 }
 
 .btn-edit:hover {
+    color: var(--primary);
+    background-color: oklch(from var(--dark) calc(l + 0.08) c h);
+    /*
     background-color: oklch(from var(--med) calc(l + 0.08) c h);
+    */
 }
 
 .layout {
@@ -271,16 +304,38 @@ button:hover {
     background-color: var(--dark);
 }
 
+/*
+
+You could save the paths as strings, but Idk how you'd get them
+into html. Maybe just make a web component
+
+*/
+
 .page-workouts {
+    display: grid;
+    grid-template-columns: minmax(856px, 1.7fr) 1fr;
+    grid-template-rows: 1fr;
+    gap: var(--spacing-4);
     background-color: var(--dark);
 }
 
 /* widgets --------------------------------------------- */
 
+.widget-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(60px, 5vh) 1fr;
+}
+
 .exercise-list {
+    border: 1px solid var(--med-light);
+    border-radius: var(--round-md);
+
     ul li {
         display: flex;
         align-items: center;
+        border-bottom: 1px solid var(--med);
+        padding-bottom: var(--spacing-2);
         margin: var(--spacing-2) auto;
 
         &:first-child {
@@ -289,6 +344,8 @@ button:hover {
 
         &:last-child {
             margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
 
         &.highlighted {
@@ -298,7 +355,6 @@ button:hover {
 
     & .item-name {
         flex: 1 0 auto;
-        color: var(--dark);
 
         &.show {
             display: block;
@@ -313,7 +369,6 @@ button:hover {
         flex: 1 0 auto;
 
         &.show {
-            background-color: oklch(from var(--light) l c h / 0.25);
             display: block;
         }
 
@@ -322,30 +377,37 @@ button:hover {
         }
     }
 
-    & .item-buttons.show {
-        display: block;
+    & .item-buttons {
+        align-items: center;
         flex: 0 1 auto;
+
+        &.show {
+            display: flex;
+        }
+
+        &.hide {
+            display: none;
+        }
     }
 
-    & .item-buttons.hide {
-        display: none;
+    & .item-edit-buttons {
+        align-items: center;
         flex: 0 1 auto;
-    }
 
-    & .item-edit-buttons.show {
-        display: block;
-        flex: 0 1 auto;
-    }
+        &.show {
+            display: flex;
+        }
 
-    & .item-edit-buttons.hide {
-        display: none;
-        flex: 0 1 auto;
+        &.hide {
+            display: none;
+        }
     }
 }
 
 .workout-view {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
     gap: var(--spacing-3);
 
     & .title-group {

@@ -54,8 +54,10 @@ func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
 		Title: "Workouts",
 		Js:    []string{
             appendPath("/pages/workouts.js"),
+			appendPath("/pages/exercises.js"),
 			appendPath("/partials/workout-list.js"),
 			appendPath("/partials/workout-item.js"),
+			appendPath("/partials/exercise-list.js"),
         },
 	}
 

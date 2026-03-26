@@ -1,31 +1,72 @@
+<!-- prettier-ignore-start -->
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
+{{ template "svg-icon.html" }}
 {{ template "form-input.html" }}
 {{ template "save-indicator.html" }}
 {{ template "select-exercise.html"}}
 {{ template "workout-movement.html"}}
+<!-- prettier-ignore-end -->
 
 <div id="workouts-container" class="page-workouts layout">
-    <button type="button" data-add-workout>Add New Workout</button>
-    <div id="workout-list-container"></div>
+    <section class="widget-section">
+        <div style="display: flex; align-items: center; justify-content: end;">
+            <button
+                type="button"
+                style="display: flex; align-items: center; justify-content: center; padding: 0.5rem;"
+                data-add-workout>
+                <div class="me-2">Add New Workout</div>
+                <svg-icon icon="dumbell" size="1.5rem"></svg-icon>
+            </button>
+        </div>
+<div id="workout-list-container"></div>
+    </section>
+    <section class="widget-section">
+        <form id="add-exercise-form" style="
+            display: grid;
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr min-content;
+            align-items: center;
+            justify-content: end;">
+                <span class="me-3">
+                <form-input
+                    name="name"
+                    style="width: 100%;"
+                    placeholder="Add An Exercise..."
+                    value=""></form-input>
+                </span>
+                <button type="submit" class="btn-add ms-3" style="width: 2.25rem; height: 2.25rem;">
+                    <svg-icon icon="add"></svg-icon>
+                </button>
+        </form>
+        <div id="exercise-list-container"></div>
+    </section>
 </div>
 {{ template "foot.html" .}}
 
 <script>
-    import { Post } from '/static/js/request.js'
-    import { swapContent } from '/static/js/swap.js'
+    import { Post } from "/static/js/request.js";
+    import { swapContent } from "/static/js/swap.js";
 
     //@handle:data-add-workout
     export const addWorkout = () => {
-        console.log("add workout")
-        Post("/api/workouts").then((res) => {
-            //update list
-            swapContent("/api/partials/workouts", "workout-list-container")
-        }).catch((err) => {
-            console.log("post err", err)
-        })
+        Post("/api/workouts")
+            .then((res) => {
+                //update list
+                swapContent("/api/partials/workouts", "workout-list-container");
+            })
+            .catch((err) => {
+                console.log("post err", err);
+            });
+    };
+
+    const exerciseAdded = () => {
+        swapContent("/api/partials/workouts", "workout-list-container");
     }
 
+    document.addEventListener("exercise-added", exerciseAdded)
+
     //note: should probably limit bare swapContent calls to the page level
-    swapContent("/api/partials/workouts", "workout-list-container")
+    swapContent("/api/partials/workouts", "workout-list-container");
+    swapContent("/api/partials/exercises", "exercise-list-container");
 </script>
