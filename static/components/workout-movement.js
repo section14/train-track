@@ -115,8 +115,6 @@ class WorkoutMovement extends HTMLElement {
                 cancelable: true,
             });
 
-            console.log("ii", this.dataObject.id)
-
             const mEvent = new CustomEvent("movement-changed", {
                 detail: { id: this.dataObject.workoutId, saving: true },
                 bubbles: true,

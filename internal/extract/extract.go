@@ -274,7 +274,7 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 		nameBuilder.WriteString("\n")
 	}
 
-    nameBuilder.WriteString("import { toggleHandler } from \"/static/js/handlers.js\"\n")
+    nameBuilder.WriteString("import { toggleWorkoutHandler, toggleExerciseHandler } from \"/static/js/handlers.js\"\n")
 	nameBuilder.WriteString("\n")
 	builder.WriteString(nameBuilder.String())
 }
@@ -303,7 +303,11 @@ func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 	var switchBuilder strings.Builder
 
     switchBuilder.WriteString("            case \"toggleWorkout\":\n ")
-	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleHandler"))
+	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleWorkoutHandler"))
+	switchBuilder.WriteString("                break;\n")
+
+    switchBuilder.WriteString("            case \"toggleExercise\":\n ")
+	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleExerciseHandler"))
 	switchBuilder.WriteString("                break;\n")
 
 	for funcName, cases := range dataToFuncMap {

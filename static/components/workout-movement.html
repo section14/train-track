@@ -1,17 +1,30 @@
 <template id="workout-movement-template">
     <style>
         :host {
+            display: flex;
             flex: 1;
         }
 
+        /*
         .container {
             display: flex;
+            flex: 1;
             align-items: center;
             gap: var(--spacing-2);
 
             * {
                 flex: 1;
             }
+        }
+        */
+
+        .container {
+            display: grid;
+            flex: 1 1 100%;
+            align-items: center;
+            gap: var(--spacing-2);
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr min-content min-content;
         }
 
         button {
@@ -58,16 +71,12 @@
             background-color: oklch(from var(--dark) calc(l - 0.08) c h);
         }
     </style>
-
     <form id="movement-form" class="container">
         <select-exercise id="exercise" name="exercise"></select-exercise>
         <form-input id="sets" name="sets" type="number" placeholder="Enter Sets"></form-input>
         <form-input id="reps" name="reps" type="number" placeholder="Enter Reps"></form-input>
         <form-input id="weight" name="weight" type="number" placeholder="Enter Weight"></form-input>
-        <div style="width: min-content;">
-
         <save-indicator id="saver"></save-indicator>
-        </div>
         <button id="delete-mvmt" type="button" class="btn-delete">
             <svg-icon icon="remove"></svg-icon>
         </button>

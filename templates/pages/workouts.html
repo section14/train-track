@@ -1,15 +1,10 @@
 <!-- prettier-ignore-start -->
 {{ template "head.html" .}}
 {{ template "nav.html" .}}
-{{ template "svg-icon.html" }}
-{{ template "form-input.html" }}
-{{ template "save-indicator.html" }}
-{{ template "select-exercise.html"}}
-{{ template "workout-movement.html"}}
 <!-- prettier-ignore-end -->
 
 <div id="workouts-container" class="page-workouts layout">
-    <section class="widget-section">
+    <section class="widget-section workout-area">
         <div style="display: flex; align-items: center; justify-content: end;">
             <button
                 type="button"
@@ -19,30 +14,54 @@
                 <svg-icon icon="dumbell" size="1.5rem"></svg-icon>
             </button>
         </div>
-<div id="workout-list-container"></div>
+    <div id="workout-list-container"></div>
     </section>
-    <section class="widget-section">
-        <form id="add-exercise-form" style="
-            display: grid;
-            grid-template-rows: 1fr;
-            grid-template-columns: 1fr min-content;
-            align-items: center;
-            justify-content: end;">
-                <span class="me-3">
-                <form-input
-                    name="name"
-                    style="width: 100%;"
-                    placeholder="Add An Exercise..."
-                    value=""></form-input>
-                </span>
-                <button type="submit" class="btn-add ms-3" style="width: 2.25rem; height: 2.25rem;">
-                    <svg-icon icon="add"></svg-icon>
-                </button>
-        </form>
-        <div id="exercise-list-container"></div>
+    <section class="widget-section exercise-area">
+        <div style="display: flex; align-items: center;">
+            <button
+                id="toggle-exercise-button"
+                type="button"
+                class="btn-add me-3"
+                style="display: none; width: 2.25rem; height: 2.25rem;"
+                data-toggle-exercise=""
+            >
+                <svg-icon icon="visible"></svg-icon>
+            </button>
+            <form id="add-exercise-form" style="
+                flex: 1;
+                display: grid;
+                grid-template-rows: 1fr;
+                grid-template-columns: 1fr min-content;
+                align-items: center;
+                justify-content: end;">
+                    <span class="me-3">
+                    <form-input
+                        name="name"
+                        style="width: 100%;"
+                        placeholder="Add An Exercise..."
+                        value=""></form-input>
+                    </span>
+                    <button type="submit" class="btn-add ms-3" style="width: 2.25rem; height: 2.25rem;">
+                        <svg-icon icon="add"></svg-icon>
+                    </button>
+            </form>
+        </div>
+        <div id="exercise-collapse" class="collapse-wrapper show">
+            <div class="collapse-content">
+                <div id="exercise-list-container"></div>
+            </div>
+        </div>
     </section>
 </div>
+
+<!-- prettier-ignore-start -->
 {{ template "foot.html" .}}
+{{ template "svg-icon.html" }}
+{{ template "form-input.html" }}
+{{ template "save-indicator.html" }}
+{{ template "select-exercise.html"}}
+{{ template "workout-movement.html"}}
+<!-- prettier-ignore-end -->
 
 <script>
     import { Post } from "/static/js/request.js";
