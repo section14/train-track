@@ -1,11 +1,12 @@
-{{range .}}
+{{range $i, $v := .}}
 <workout-movement
-    id="{{.ID}}"
-    workout-id="{{.WorkoutID}}"
-    exercise-id="{{.ExerciseID}}"
-    sets="{{.Sets}}"
-    reps="{{.Reps}}"
-    weight="{{.Weight}}"
+    id="{{$v.ID}}"
+    index="{{$i}}"
+    workout-id="{{$v.WorkoutID}}"
+    exercise-id="{{$v.ExerciseID}}"
+    sets="{{$v.Sets}}"
+    reps="{{$v.Reps}}"
+    weight="{{$v.Weight}}"
 ></workout-movement>
 {{end}}
 

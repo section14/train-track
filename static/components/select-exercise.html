@@ -2,6 +2,7 @@
     <style>
         :host {
             display: flex;
+            flex-direction: column;
         }
 
         .omg{}
@@ -12,12 +13,21 @@
             line-height: 1.5;
             color: var(--light);
             background-color: var(--dark);
-            border: 2px solid oklch(from var(--dark) calc(l + 0.45) c h);
+            border: 2px solid oklch(from var(--dark) calc(l + 0.2) c h);
             border-radius: 0.25rem;
+        }
+
+        label {
+            color: var(--med);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            margin-left: 0.1rem;
+            margin-bottom: 0.75rem;
         }
     </style>
 
-    <select name="exercises">
+    <label for="form-select"></label>
+    <select id="form-select" name="exercises">
         <option value="0">-- Select Exercise --</option>
     </select>
 </template>

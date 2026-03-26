@@ -24,7 +24,7 @@
             align-items: center;
             gap: var(--spacing-2);
             grid-template-rows: 1fr;
-            grid-template-columns: 1fr 1fr 1fr 1fr min-content min-content;
+            grid-template-columns: 1fr 1fr 1fr 1fr min-content;
         }
 
         button {
@@ -72,13 +72,15 @@
         }
     </style>
     <form id="movement-form" class="container">
-        <select-exercise id="exercise" name="exercise"></select-exercise>
-        <form-input id="sets" name="sets" type="number" placeholder="Enter Sets"></form-input>
-        <form-input id="reps" name="reps" type="number" placeholder="Enter Reps"></form-input>
-        <form-input id="weight" name="weight" type="number" placeholder="Enter Weight"></form-input>
-        <save-indicator id="saver"></save-indicator>
-        <button id="delete-mvmt" type="button" class="btn-delete">
-            <svg-icon icon="remove"></svg-icon>
-        </button>
+        <select-exercise id="exercise" name="exercise" label="Exercise"></select-exercise>
+        <form-input id="sets" name="sets" type="number" label="Sets" placeholder="Enter Sets"></form-input>
+        <form-input id="reps" name="reps" type="number" label="Reps" placeholder="Enter Reps"></form-input>
+        <form-input id="weight" name="weight" type="number" label="Weight" placeholder="Enter Weight"></form-input>
+        <div id="button-group" style="display: flex; flex: 1; align-items: center;">
+            <save-indicator id="saver"></save-indicator>
+            <button id="delete-mvmt" type="button" class="btn-delete">
+                <svg-icon icon="remove"></svg-icon>
+            </button>
+        </div>
     </form>
 </template>

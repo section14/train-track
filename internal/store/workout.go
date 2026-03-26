@@ -148,7 +148,7 @@ func (ws *WorkoutStore) AddWorkout() error {
 	}
 	defer stmt.Close()
 
-	now := time.Now()
+    now := time.Now()
 	_, err = stmt.Exec(now.Unix())
 	if err != nil {
 		return err
