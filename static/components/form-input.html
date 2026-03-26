@@ -2,6 +2,7 @@
     <style>
         :host {
             display: flex;
+            flex-direction: column;
             flex: 1 1 100%;
             min-width: 0;
         }
@@ -32,6 +33,14 @@
 
         input::placeholder {
             color: oklch(from var(--med) calc(l - 0.08) c h);
+        }
+
+        label {
+            color: var(--med);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            margin-left: 0.1rem;
+            margin-bottom: 0.75rem;
         }
     </style>
 

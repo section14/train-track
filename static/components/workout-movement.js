@@ -41,6 +41,7 @@ class WorkoutMovement extends HTMLElement {
         weight: 0,
     };
 
+    index = -1;
     saving = false;
     debouncer = debounce(2000);
     movementForm;
@@ -153,6 +154,17 @@ class WorkoutMovement extends HTMLElement {
         this.reps.setAttribute("value", this.dataObject.reps);
         this.weight.setAttribute("value", this.dataObject.weight);
 
+        // show labels and offset buttons on first item
+        if (this.index === "0") {
+            const buttons = this.shadowRoot.getElementById("button-group")
+            buttons.style.setProperty("margin-top", "2.0rem");
+
+            this.exercise.setAttribute("show-label", true);
+            this.sets.setAttribute("show-label", true);
+            this.reps.setAttribute("show-label", true);
+            this.weight.setAttribute("show-label", true);
+        }
+
         // register current data with parent
         this.submitForm(null);
     }
@@ -164,11 +176,14 @@ class WorkoutMovement extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["id", "workout-id", "exercise-id", "sets", "reps", "weight"];
+        return ["id", "index", "workout-id", "exercise-id", "sets", "reps", "weight"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
+            case "index":
+                this.index = newValue;
+                break
             case "id":
                 this.dataObject.id = newValue;
                 break;

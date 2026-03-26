@@ -1,6 +1,7 @@
 @import "/static/css/theme.css";
 
 :root {
+    --header-height: 10vh;
     --success: #3ba55c;
     --danger: #eb3a0e;
 }
@@ -8,7 +9,7 @@
 /* element styles */
 /*html, body, input, textarea, button {*/
 * {
-    font-family: sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 16px;
 }
 
@@ -30,15 +31,74 @@ ul li {
     padding: 0;
 }
 
+/* app -------------------------------------------------- */
+
+#app-wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(100px, var(--header-height)) 1fr;
+    width: 100vw;
+    max-width: 100%;
+    height: 100vh;
+}
+
+#page-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#page-content {
+    width: 100%;
+    max-width: 1600px;
+}
+
+/* end app ---------------------------------------------- */
+
 /* nav -------------------------------------------------- */
 
-.nav {
-    cursor: pointer;
+.nav-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
 
-    & ul {
-        & li {
-            display: inline-block;
-            gap: var(--spacing-2);
+.nav {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    grid-template-rows: 1fr;
+    gap: var(--spacing-4);
+    max-width: 1600px;
+
+    & .logo-container {
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: var(--spacing-3);
+
+        & .logo-text {
+            width: 100vw;
+
+            & * {
+                font-family: "Press Start 2P";
+                font-size: 2rem;
+                font-weight: bold;
+            }
+        }
+    }
+
+    & .links {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        margin-right: var(--spacing-3);
+
+        & ul {
+            & li {
+                display: inline-block;
+                gap: var(--spacing-2);
+            }
         }
     }
 
@@ -46,11 +106,42 @@ ul li {
         color: var(--light);
         background-color: var(--dark);
         border-radius: 0;
-        transition: background-color 0.25s ease;
+        cursor: pointer;
+        border-bottom: 2px solid var(--dark);
+        transition: background-color 0.25s ease, border-color 0.25s ease;
 
         &:hover {
             color: oklch(from var(--light) calc(l - 0.14) c h);
             background-color: oklch(from var(--med) l c h / 0.25);
+            border-bottom: 2px solid var(--primary);
+        }
+    }
+}
+
+@media (width < 760px) {
+    .nav {
+        & .logo-container {
+            & .logo-text {
+                & * {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+}
+
+@media (width < 650px) {
+    .nav {
+        grid-template-columns: 1fr 1fr;
+
+        & .logo-container {
+            & .logo-text {
+                & * {
+                    font-size: 1rem;
+                    font-weight: bold;
+                }
+            }
         }
     }
 }
@@ -114,9 +205,10 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--dark);
     padding: 0.5rem;
-    background-color: var(--primary);
+    cursor: pointer;
+    color: oklch(from var(--primary) calc(l + 0.1) c h);
+    background-color: oklch(from var(--dark) calc(l + 0.08) c h);
     border: none;
     border-radius: 0.375rem;
     transition:
@@ -129,8 +221,8 @@ button:focus {
 }
 
 button:hover {
-    cursor: pointer;
-    background-color: oklch(from var(--primary) calc(l + 0.2) c h);
+    color: var(--dark);
+    background-color: var(--primary);
 }
 
 /* end element styles ---------------------------------- */
@@ -168,7 +260,8 @@ button:hover {
     width: 2.5rem;
     height: 2.5rem;
     padding: 0;
-    background-color: var(--primary);
+    color: var(--light);
+    background-color: var(--primary-400);
 
     & svg {
         width: 2rem;
@@ -226,7 +319,7 @@ button:hover {
     width: 2.5rem;
     height: 2.5rem;
     padding: 0;
-    color: oklch(from var(--danger) calc(l + 0.2) c h);
+    /*color: oklch(from var(--danger) calc(l + 0.2) c h);*/
     background-color: var(--dark);
 
     &.alt {
@@ -328,7 +421,7 @@ into html. Maybe just make a web component
     }
 }
 
-@media(width < 1100px) {
+@media (width < 1100px) {
     .page-workouts {
         grid-template-columns: 1fr;
         grid-template-rows: min-content 1fr;
@@ -442,7 +535,7 @@ into html. Maybe just make a web component
 
     & ul {
         li {
-            padding: var(--spacing-2);
+            padding: var(--spacing-3);
             border: 1px solid var(--med-light);
             border-radius: var(--round-md);
             margin-bottom: var(--spacing-6);

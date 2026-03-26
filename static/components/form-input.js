@@ -19,6 +19,7 @@ class FormInput extends HTMLElement {
     //input field refs
     inputField;
     labelElem;
+    showLabel = false;
     style = "";
 
     //component state
@@ -54,13 +55,20 @@ class FormInput extends HTMLElement {
 
         this.internals.setFormValue(this.dataObject.value);
 
+        this.renderLabel();
+
         //listen for changes
         this.inputField.addEventListener("input", this.updateForm.bind(this));
+    }
 
+    renderLabel() {
         //label
         this.labelElem = this.shadowRoot.querySelector("label");
-        if (this.dataObject.label) {
+        if (this.dataObject.label && this.showLabel) {
+            this.labelElem.style.setProperty("display", "block");
             this.labelElem.innerHTML = this.dataObject.label;
+        } else {
+            this.labelElem.style.setProperty("display", "none");
         }
     }
 
@@ -69,7 +77,16 @@ class FormInput extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["name", "type", "value", "label", "placeholder", "style", "error-message"];
+        return [
+            "name",
+            "type",
+            "value",
+            "label",
+            "show-label",
+            "placeholder",
+            "style",
+            "error-message",
+        ];
     }
 
     //these methods update when the component attributes are changed from a parent
@@ -107,9 +124,9 @@ class FormInput extends HTMLElement {
 
     /**
      * Runs when the value of an attribute is changed on the component
-     * @param  {String} name     The attribute name
-     * @param  {String} oldValue The old attribute value
-     * @param  {String} newValue The new attribute value
+     * @param  {string} name     The attribute name
+     * @param  {string} oldValue The old attribute value
+     * @param  {string} newValue The new attribute value
      */
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
@@ -127,6 +144,10 @@ class FormInput extends HTMLElement {
                 break;
             case "label":
                 this.labelChanged(newValue);
+                break;
+            case "show-label":
+                this.showLabel = newValue;
+                this.renderLabel();
                 break;
             case "placeholder":
                 this.placeholderChanged(newValue);
