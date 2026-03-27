@@ -53,6 +53,16 @@ const handleSizeChange = (e) => {
 }
 
 window.onload = function() {
+    const path = window.location.pathname
+
+    if (path === "/workouts") {
+        const btn = document.getElementById("nav-workouts")
+        btn.classList.toggle("selected")
+    } else {
+        const btn = document.getElementById("nav-exercises")
+        btn.classList.toggle("selected")
+    }
+
     globalThis.docLoaded = true;
     handleSizeChange(mediaQuery);
 }

@@ -1,3 +1,7 @@
+export const changeUrl = (url) => {
+    window.location.href = url;
+}
+
 export const toggleWorkoutHandler = (id) => {
     const collapse = document.getElementById(`collapse-${id}`)
     collapse.classList.toggle("show")

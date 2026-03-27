@@ -9,14 +9,27 @@
                     <div class="title">
                         <div class="title-group">
                             <div class="workout-icon">
-                                <button
-                                    id="collapse-movement-{{.ID}}"
-                                    type="button"
-                                    class="btn-add me-2"
-                                    data-toggle-workout="{{.ID}}"
-                                >
-                                    <svg-icon icon="visible"></svg-icon>
-                                </button>
+                                <hint-button class="me-2">
+                                    <button
+                                        slot="button"
+                                        id="collapse-movement-{{.ID}}"
+                                        type="button"
+                                        class="btn-add"
+                                        style="anchor-name: --cm-{{.ID}};"
+                                        data-toggle-workout="{{.ID}}"
+                                    >
+                                        <svg-icon icon="visible"></svg-icon>
+                                    </button>
+                                    <div slot="hint">
+                                        <div
+                                            id="collapse-hint"
+                                            popover="hint"
+                                            style="position-anchor: --cm-{{.ID}};"
+                                        >
+                                            Hide Workout
+                                        </div>
+                                    </div>
+                                </hint-button>
                             </div>
                             <h3 class="ms-2">
                                 {{.Date.Format "Jan 02, 2006"}}<span class="text-med"
@@ -25,23 +38,49 @@
                             </h3>
                         </div>
                         <div class="workout-buttons">
-                            <button
-                                id="add-movement-{{.ID}}"
-                                type="button"
-                                class="btn-add me-2"
-                                data-add-movement-id="{{.ID}}"
-                                data-workout-date="{{.Date}}"
-                            >
-                                <svg-icon icon="add"></svg-icon>
-                            </button>
-                            <button
-                                id="delete-movement-{{.ID}}"
-                                type="button"
-                                class="btn-delete"
-                                data-delete-workout-id="{{.ID}}"
-                            >
-                                <svg-icon icon="remove"></svg-icon>
-                            </button>
+                            <hint-button class="me-2">
+                                <button
+                                    slot="button"
+                                    id="add-movement-{{.ID}}"
+                                    type="button"
+                                    class="btn-add"
+                                    style="anchor-name: --aw-{{.ID}};"
+                                    data-add-movement-id="{{.ID}}"
+                                    data-workout-date="{{.Date}}"
+                                >
+                                    <svg-icon icon="add"></svg-icon>
+                                </button>
+                                <div slot="hint">
+                                    <div
+                                        id="collapse-hint"
+                                        popover="hint"
+                                        style="position-anchor: --aw-{{.ID}};"
+                                    >
+                                        Add Workout
+                                    </div>
+                                </div>
+                            </hint-button>
+                            <hint-button>
+                                <button
+                                    slot="button"
+                                    id="delete-movement-{{.ID}}"
+                                    type="button"
+                                    class="btn-delete"
+                                    style="anchor-name: --dw-{{.ID}};"
+                                    data-delete-workout-id="{{.ID}}"
+                                >
+                                    <svg-icon icon="remove"></svg-icon>
+                                </button>
+                                <div slot="hint">
+                                    <div
+                                        id="collapse-hint"
+                                        popover="hint"
+                                        style="position-anchor: --dw-{{.ID}};"
+                                    >
+                                        Delete Workout
+                                    </div>
+                                </div>
+                            </hint-button>
                         </div>
                     </div>
                     <partial-loader

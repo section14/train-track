@@ -274,7 +274,7 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 		nameBuilder.WriteString("\n")
 	}
 
-    nameBuilder.WriteString("import { toggleWorkoutHandler, toggleExerciseHandler } from \"/static/js/handlers.js\"\n")
+    nameBuilder.WriteString("import { toggleWorkoutHandler, toggleExerciseHandler, changeUrl } from \"/static/js/handlers.js\"\n")
 	nameBuilder.WriteString("\n")
 	builder.WriteString(nameBuilder.String())
 }
@@ -301,6 +301,10 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 //build switch case in main.js click handler
 func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 	var switchBuilder strings.Builder
+
+    switchBuilder.WriteString("            case \"changePage\":\n ")
+	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "changeUrl"))
+	switchBuilder.WriteString("                break;\n")
 
     switchBuilder.WriteString("            case \"toggleWorkout\":\n ")
 	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleWorkoutHandler"))
