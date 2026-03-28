@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math"
+	"math/rand/v2"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -22,6 +24,7 @@ type Element struct {
 type Handler struct {
 	AttrName         string
 	DataName         []string
+	RawNames         []string
 	FileName         string
 	RelativeFileName string
 	FuncName         string
@@ -89,7 +92,7 @@ func dashToCamel(s string) string {
 	return builder.String()
 }
 
-func extractHanlder(path string, line []byte, extractor *extractState) []byte {
+func extractHanlder(id int, path string, line []byte, extractor *extractState) []byte {
 	matcher := "//@handle:"
 
 	if !extractor.extracting && strings.Contains(string(line), matcher) {
@@ -101,7 +104,7 @@ func extractHanlder(path string, line []byte, extractor *extractState) []byte {
 		dataNames := make([]string, 0)
 
 		for _, n := range rawDataNames {
-			dataNames = append(dataNames, dashToCamel(n))
+			dataNames = append(dataNames, fmt.Sprintf("%s-%d", dashToCamel(n), id))
 		}
 
 		//get current working directory
@@ -111,6 +114,7 @@ func extractHanlder(path string, line []byte, extractor *extractState) []byte {
 		jsFileName, jsRelativeFileName := MakeJsPath(path, wd)
 		extractor.currentHandler.AttrName = attr
 		extractor.currentHandler.DataName = dataNames
+		extractor.currentHandler.RawNames = rawDataNames
 		extractor.currentHandler.FileName = jsFileName
 		extractor.currentHandler.RelativeFileName = jsRelativeFileName
 		extractor.extracting = true
@@ -133,6 +137,10 @@ func extractHanlder(path string, line []byte, extractor *extractState) []byte {
 	return line
 }
 
+func randNum() int {
+	return 1 + rand.IntN(math.MaxInt-1)
+}
+
 func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 	elem := Element{NewHTML: nil, Js: nil, JsRemoved: false}
 
@@ -142,12 +150,16 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 	}
 	defer file.Close()
 
+	//random num to prevent data-* collisions
+	randId := randNum()
+
 	scanner := bufio.NewScanner(file)
 
 	var sbHTML strings.Builder
 	var sbJs strings.Builder
 
 	startExtracting := false
+	foundAnyMatches := false
 
 	extractor := extractState{
 		extracting:     false,
@@ -155,6 +167,8 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 		currentHandler: Handler{},
 		emptyHandler:   Handler{},
 	}
+
+	rawNames := make([]string, 0)
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -172,7 +186,7 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 
 		if startExtracting {
 			//add handler extraction here
-			newLine := extractHanlder(path, scanner.Bytes(), &extractor)
+			newLine := extractHanlder(randId, path, scanner.Bytes(), &extractor)
 
 			if !extractor.extracting {
 				sbJs.Write(newLine)
@@ -180,8 +194,12 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 			}
 
 			if extractor.foundMatch {
+				// indicates a need to execute further functionality if one or more matches are found
+				foundAnyMatches = true
+
 				//add the func name
 				handlers = append(handlers, extractor.currentHandler)
+				rawNames = append(rawNames, extractor.currentHandler.RawNames...)
 
 				//write func definition line
 				sbJs.Write(newLine)
@@ -199,7 +217,27 @@ func ExtractJs(path string, handlers []Handler) (Element, []Handler, error) {
 
 	}
 
-	elem.NewHTML = []byte(sbHTML.String())
+	if foundAnyMatches {
+		newNames := make([]string, 0)
+
+		//build "new" names with randId appended to the end
+		for _, n := range rawNames {
+			name := fmt.Sprintf("%s-%d", n, randId)
+			newNames = append(newNames, name)
+		}
+
+		//inject updated data-* names
+		htmlStr := sbHTML.String()
+
+		for i := 0; i < len(newNames); i++ {
+			htmlStr = strings.ReplaceAll(htmlStr, rawNames[i], newNames[i])
+		}
+
+		elem.NewHTML = []byte(htmlStr)
+	} else {
+		elem.NewHTML = []byte(sbHTML.String())
+	}
+
 	elem.Js = []byte(sbJs.String())
 
 	return elem, handlers, nil
@@ -274,7 +312,7 @@ func buildImports(builder *strings.Builder, fileNameMap map[string][]string) {
 		nameBuilder.WriteString("\n")
 	}
 
-    nameBuilder.WriteString("import { toggleWorkoutHandler, toggleExerciseHandler, changeUrl } from \"/static/js/handlers.js\"\n")
+	nameBuilder.WriteString("import { toggleWorkoutHandler, toggleExerciseHandler, changeUrl } from \"/static/js/handlers.js\"\n")
 	nameBuilder.WriteString("\n")
 	builder.WriteString(nameBuilder.String())
 }
@@ -298,19 +336,19 @@ func buildGlobalClickHandler(builder *strings.Builder, switchStmt string) {
 	builder.WriteString("document.addEventListener(\"click\", globalClickHandler);\n\n")
 }
 
-//build switch case in main.js click handler
+// build switch case in main.js click handler
 func buildGlobalSwitch(dataToFuncMap map[string][]string) string {
 	var switchBuilder strings.Builder
 
-    switchBuilder.WriteString("            case \"changePage\":\n ")
+	switchBuilder.WriteString("            case \"changePage\":\n ")
 	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "changeUrl"))
 	switchBuilder.WriteString("                break;\n")
 
-    switchBuilder.WriteString("            case \"toggleWorkout\":\n ")
+	switchBuilder.WriteString("            case \"toggleWorkout\":\n ")
 	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleWorkoutHandler"))
 	switchBuilder.WriteString("                break;\n")
 
-    switchBuilder.WriteString("            case \"toggleExercise\":\n ")
+	switchBuilder.WriteString("            case \"toggleExercise\":\n ")
 	switchBuilder.WriteString(fmt.Sprintf("                %s(dataSet[key]);\n", "toggleExerciseHandler"))
 	switchBuilder.WriteString("                break;\n")
 

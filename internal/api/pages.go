@@ -23,15 +23,7 @@ func appendPath(p string) string {
 }
 
 func (s *Server) homePage(w http.ResponseWriter, r *http.Request) {
-	head := HeadImports{
-		Title: "Home",
-		Js:    nil,
-	}
-
-	err := s.tpls.ExecuteTemplate(w, "pages/home.html", head)
-	if err != nil {
-		fmt.Println("couldn't open home", err)
-	}
+    http.Redirect(w, r, "/workouts", http.StatusFound)
 }
 
 func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
