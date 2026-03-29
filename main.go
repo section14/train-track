@@ -16,13 +16,18 @@ var static embed.FS
 
 func main() {
     buildType := os.Args[1]
+    port := os.Args[2]
+
+    if len(os.Args) < 2 {
+        fmt.Println("provide a run type and port. ex: prod 8080")
+    }
 
     if buildType == "dev" {
-		api.ServeDev()
+		api.ServeDev(port)
 	} else if buildType == "prod" {
-		api.ServeProd(templates, static)
+		api.ServeProd(port, templates, static)
 	} else {
-		fmt.Printf("%s is not a valid build type. Supply dev or prod.", buildType)
+		fmt.Printf("%s is not a valid run type. Supply dev or prod.", buildType)
 		os.Exit(1)
 	}
 }

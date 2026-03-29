@@ -19,6 +19,5 @@ type Movement struct {
 
 type Workout struct {
 	ID int `json:"id"`
-	//Movements []Movement `json:"movements"`
 	Date time.Time `json:"date"`
 }

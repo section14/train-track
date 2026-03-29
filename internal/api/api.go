@@ -203,7 +203,7 @@ func embeddedTemplates(
 	return root, err
 }
 
-func ServeDev() {
+func ServeDev(port string) {
 	mux := chi.NewRouter()
 	//mux.Use(middleware.Logger)
 	mux.Use(cors.Handler(cors.Options{
@@ -258,10 +258,10 @@ func ServeDev() {
 
 	fmt.Println("serving dev...")
 
-	Serve(mux, t)
+	Serve(port, mux, t)
 }
 
-func ServeProd(templates embed.FS, static embed.FS) {
+func ServeProd(port string, templates embed.FS, static embed.FS) {
 	sub, err := fs.Sub(templates, "templates")
 	if err != nil {
 		log.Fatal("couldn't setup embedded templates directory: ", err)
@@ -301,11 +301,12 @@ func ServeProd(templates embed.FS, static embed.FS) {
 	//static files
 	mux.Handle("/static/*", http.FileServerFS(static))
 
-	Serve(mux, t)
+	Serve(port, mux, t)
 }
 
-func Serve(mux *chi.Mux, t *template.Template) {
+func Serve(port string, mux *chi.Mux, t *template.Template) {
 	env := config.NewEnv()
+    host := "localhost"
 
 	//stores
 	exerciseStore := store.NewExerciseStore(env)
@@ -318,8 +319,7 @@ func Serve(mux *chi.Mux, t *template.Template) {
 	server := NewServer(t, exerciseService, workoutService)
 	handlers(mux, server)
 
-	//addr := fmt.Sprintf("%s:%s", env.Location, env.Port)
-	addr := fmt.Sprintf("%s:%s", "localhost", "8082")
+	addr := fmt.Sprintf("%s:%s", host, port)
 
 	s := &http.Server{
 		Addr:    addr,
@@ -327,6 +327,6 @@ func Serve(mux *chi.Mux, t *template.Template) {
 		// other settings omitted
 	}
 
-	fmt.Println("serving on localhost:8082...")
+	fmt.Printf("serving on %s:%s...", host, port)
 	log.Fatal(s.ListenAndServe())
 }

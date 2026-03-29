@@ -14,7 +14,9 @@
 }
 
 body {
-    background-color: var(--dark);
+    /*background-color: var(--dark);*/
+    background: linear-gradient(oklch(from var(--dark) calc(l - 0.035) c h), var(--dark));
+    background-attachment: fixed;
     color: var(--med-light);
     margin: 0;
     padding: 0;
@@ -119,20 +121,22 @@ ul li {
 
     button {
         color: var(--light);
-        background-color: var(--dark);
-        border-radius: 0;
+        /*background-color: var(--dark);*/
+        background: transparent;
+        border-radius: 0.325rem;
         cursor: pointer;
-        border-bottom: 2px solid var(--dark);
+        /*border-bottom: 2px solid transparent;*/
         transition: background-color 0.25s ease, border-color 0.25s ease;
 
         &:hover {
             color: oklch(from var(--light) calc(l - 0.14) c h);
             background-color: oklch(from var(--med) l c h / 0.25);
-            border-bottom: 2px solid var(--primary);
+            /*border-bottom: 2px solid var(--primary);*/
         }
 
         &.selected {
             color: var(--primary);
+            /*border-bottom: 2px solid var(--primary);*/
         }
     }
 }
@@ -409,11 +413,11 @@ button:hover {
 /* pages --------------------------------------------- */
 
 .page-home {
-    background-color: var(--light);
+    /*background-color: var(--light);*/
 }
 
 .page-exercises {
-    background-color: var(--dark);
+    /*background-color: var(--dark);*/
 }
 
 /*
@@ -429,7 +433,6 @@ into html. Maybe just make a web component
     grid-template-rows: 1fr;
     grid-template-areas: "w e";
     gap: var(--spacing-4);
-    background-color: var(--dark);
 
     & .workout-area {
         grid-area: w;

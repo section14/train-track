@@ -215,13 +215,13 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 		return movements, err
 	}
 
+    now := time.Now()
 	m := model.Movement{
 		WorkoutID:  workoutId,
 		ExerciseID: placeholder,
 		Sets:       3,
 		Reps:       5,
 		Weight:     10,
-		Date:       time.Now(),
 	}
 
 	q := `
@@ -236,7 +236,7 @@ func (ws *WorkoutStore) AddMovement(workoutId int) ([]model.Movement, error) {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(m.WorkoutID, m.ExerciseID, m.Sets, m.Reps, m.Weight, m.Date).Scan(&id)
+	err = stmt.QueryRow(m.WorkoutID, m.ExerciseID, m.Sets, m.Reps, m.Weight, now.Unix()).Scan(&id)
 	if err != nil {
 		return movements, err
 	}

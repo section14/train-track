@@ -46,7 +46,6 @@
                                     class="btn-add"
                                     style="anchor-name: --aw-{{.ID}};"
                                     data-add-movement-id="{{.ID}}"
-                                    data-workout-date="{{.Date}}"
                                 >
                                     <svg-icon icon="add"></svg-icon>
                                 </button>
@@ -56,7 +55,7 @@
                                         popover="hint"
                                         style="position-anchor: --aw-{{.ID}};"
                                     >
-                                        Add Workout
+                                        Add Exercise
                                     </div>
                                 </div>
                             </hint-button>
@@ -106,9 +105,9 @@
     import { Patch, Delete } from "/static/js/request.js";
     import { swapContent, swapDirect } from "/static/js/swap.js";
 
-    //@handle:data-add-movement-id:data-workout-date
-    export const addExerciseMovement = (e) => {
-        const id = e.addMovementId;
+    //@handle:data-add-movement-id
+    export const addExerciseMovement = (id) => {
+        //const id = e.addMovementId;
 
         Patch("/api/workouts/add/movement", id, null)
             .then((res) => {
