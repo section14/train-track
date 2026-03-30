@@ -15,17 +15,21 @@ var templates embed.FS
 var static embed.FS
 
 func main() {
-    buildType := os.Args[1]
-    port := os.Args[2]
-
-    if len(os.Args) < 2 {
-        fmt.Println("provide a run type and port. ex: prod 8080")
+    if len(os.Args) < 4 {
+        fmt.Println("Not enough arguments. Please provide a run type, host and port. ex: prod localhost 8080")
+        os.Exit(1)
     }
 
+    buildType := os.Args[1]
+    host := os.Args[2]
+    port := os.Args[3]
+
     if buildType == "dev" {
-		api.ServeDev(port)
+		api.ServeDev(host, port)
 	} else if buildType == "prod" {
-		api.ServeProd(port, templates, static)
+		api.ServeDev(host, port)
+        //todo: implement embedding
+		//api.ServeProd(host, port, templates, static)
 	} else {
 		fmt.Printf("%s is not a valid run type. Supply dev or prod.", buildType)
 		os.Exit(1)

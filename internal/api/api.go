@@ -43,7 +43,7 @@ func handlers(mux *chi.Mux, s *Server) {
 
 	apiMux := chi.NewRouter()
 	partialsRoutes(apiMux, s)
-	postRoutes(apiMux, s)
+	jsonRoutes(apiMux, s)
 
 	mux.Mount("/api", apiMux)
 }
@@ -114,6 +114,7 @@ func extractSystemTemplates(
 }
 
 // todo: I think you're going to have to write forward "dummy" declarations like this
+/*
 func forwardFuncs() template.FuncMap {
 	return template.FuncMap{
 		"addClick":    func(id int) template.HTMLAttr { return "" },
@@ -124,6 +125,7 @@ func forwardFuncs() template.FuncMap {
 		"selectClick": func(id int) template.HTMLAttr { return "" },
 	}
 }
+*/
 
 func systemTemplates(
 	root *template.Template,
@@ -132,9 +134,8 @@ func systemTemplates(
 
 	cleanRoot := filepath.Clean(rootDir)
 	pfx := len(cleanRoot) + 1
-	//root := template.New("")
 
-	root.Funcs(forwardFuncs())
+	//root.Funcs(forwardFuncs())
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -168,10 +169,8 @@ func embeddedTemplates(
 	funcMap template.FuncMap) (*template.Template, error) {
 
 	cleanRoot := filepath.Clean(rootDir)
-	//pfx := len(cleanRoot) + 1
-	//root := template.New("")
 
-	root.Funcs(forwardFuncs())
+	//root.Funcs(forwardFuncs())
 
 	err := fs.WalkDir(files, cleanRoot, func(path string, d fs.DirEntry, e1 error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {
@@ -202,14 +201,12 @@ func embeddedTemplates(
 	return root, err
 }
 
-func ServeDev(port string) {
+func ServeDev(host, port string) {
 	mux := chi.NewRouter()
-	//mux.Use(middleware.Logger)
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
-		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -257,10 +254,11 @@ func ServeDev(port string) {
 
 	fmt.Println("serving dev...")
 
-	Serve(port, mux, t)
+	Serve(host, port, mux, t)
 }
 
-func ServeProd(port string, templates embed.FS, static embed.FS) {
+//todo: implement this with embedded static and templates directories
+func ServeProd(host string, port string, templates embed.FS, static embed.FS) {
 	sub, err := fs.Sub(templates, "templates")
 	if err != nil {
 		log.Fatal("couldn't setup embedded templates directory: ", err)
@@ -286,12 +284,10 @@ func ServeProd(port string, templates embed.FS, static embed.FS) {
 	}
 
 	mux := chi.NewRouter()
-	//mux.Use(middleware.Logger)
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
-		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"Accept", "Content-Type"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -300,12 +296,11 @@ func ServeProd(port string, templates embed.FS, static embed.FS) {
 	//static files
 	mux.Handle("/static/*", http.FileServerFS(static))
 
-	Serve(port, mux, t)
+	Serve(host, port, mux, t)
 }
 
-func Serve(port string, mux *chi.Mux, t *template.Template) {
+func Serve(host string, port string, mux *chi.Mux, t *template.Template) {
 	env := config.NewEnv()
-    host := "localhost"
 
 	//stores
 	exerciseStore := store.NewExerciseStore(env)
