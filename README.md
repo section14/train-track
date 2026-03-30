@@ -16,7 +16,11 @@ Change `8080` to whatever port you want to run the application on
 ```mkdir .data && cp test-db/db.sqlite .data```
 ```./train-track prod 8080```
 
-**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted` and `/.data` directories along with it.
+---
+
+**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted`, `/templates` and `/.data` directories along with it.
+
+---
 
 ## Development
 
