@@ -9,14 +9,20 @@
 **Requires Go v1.25.0+**
 
 ```git clone git@github.com:section14/train-track.git```
+
 ```go build -o train-track .```
 
-Change `8080` to whatever port you want to run the application on
+Change `localhost` to your desired host, and `8080` to the port you want to run the application on
 
 ```mkdir .data && cp test-db/db.sqlite .data```
-```./train-track prod 8080```
 
-**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted` and `/.data` directories along with it.
+```./train-track prod localhost 8080```
+
+---
+
+**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted`, `/templates` and `/.data` directories along with it. Embedding `/static` and `/templates` in the binary is on the roadmap.
+
+---
 
 ## Development
 
@@ -98,9 +104,9 @@ Watching attributes (ie. props) is more or less the same. Plus, Web Components g
 
 ### Web Components - Cons
 
-The primary pain points for Web Components are including them on a page and styling. If you have an HTML file for the `<template>` and a Javascript file for the component class as I do, you have to supply both files to a page. While you can write the HTML in a template literal, it fells messy to me. Go templating file inclusion relatively trivial, but it's more work than a React import.
+The primary pain points for Web Components are including them on a page and styling. If you have an HTML file for the `<template>` and a Javascript file for the component class as I do, you have to supply both files to a page. While you can write the HTML in a template literal, it fells messy to me. Go templating makes file inclusion relatively trivial, but it's more work than a React import.
 
-Styling leaves quite a bit to be desired. While CSS variables, and certain properties like font-family will cross into the Shadow DOM, none of your classes will. So, using classes can't be used in them. There are ways to define styles from outside of a Web Component by using the [part]("https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::part") pseudo selector, but your left defining styles twice. Which isn't ideal.
+Styling leaves quite a bit to be desired. While CSS variables, and certain properties like font-family will cross into the Shadow DOM, none of your classes will. So, utility classes can't be used in them. There are ways to define styles from outside of a Web Component by using the [part](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::part) pseudo selector, but your left defining styles twice. Which isn't ideal.
 
 In my opinion, an option to annotate existing CSS classes, exposing them to the Shadow DOM, would work best.
 
@@ -108,11 +114,13 @@ In my opinion, an option to annotate existing CSS classes, exposing them to the 
 
 ## Conclusion
 
-While I'm not convinced the system I've developed for this app is 100% viable, it's a worthy exploration into alternatives to the status quo in web development. And, I believe it exposes some techniques for building a dynamic UI without a frontend framework. One thing that's for sure: Javascript and CSS have come a long way by providing tools that were previously only available with 3rd party frameworks and libraries. There's an opportunity to massively reduce dependencies, and decouple apps from endless churn of frontend libraries. Those goals alone make projects like this worth the effort.
+While I'm not convinced the system I've developed for this app is 100% viable, it's a worthy exploration into alternatives to the status quo in web development. And, I believe it exposes some techniques for building a dynamic UI without a frontend framework. One thing that's for sure: Javascript and CSS have come a long way by providing tools that were previously only available via 3rd party frameworks and libraries. There's an opportunity to massively reduce dependencies, and decouple apps from the endless churn of frontend libraries. Those goals alone make projects like this worth the effort.
 
-Ultimately, the trade offs between React components and server rendered HTML partials are different. For example, I disable adding new exercises to a workout, and deleting a workout when modifying an exercise's properties (eg. sets, reps). As adding a new exercise will pull unsaved data from API, discarding changes. 
+Ultimately, the trade offs between React components and server rendered HTML partials are different. For example, I disable adding new exercises to a workout, and deleting a workout when modifying an exercise's properties (eg. sets, reps). As adding a new exercise will pull unsaved data from API, discarding changes. This is less of an issue with something like React.
 
 ## Todo
 
 - [ ] Store the exercise list (in a `<select>`) a level up to prevent redundant API calls
 - [ ] Provide a confirmation Popover when deleting a workout and exercise (from the main list)
+- [ ] Reporting to track progress on exercises
+- [ ] Embed `/templates` and `/static` into the Go binary for production builds
