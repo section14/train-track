@@ -62,11 +62,8 @@
     addExerciseForm.addEventListener("submit", addExercise)
 
     const clickChange = (id) => {
-        //working below with document. Sooo, do you need to get the
-        //page element to dispatch event working. I though pushing it
-        //on to document would bubble to this div
         const event = new CustomEvent('custom-page-event', {
-            detail: "hello",
+            detail: "",
             bubbles: true,
             cancelable: true,
         })
