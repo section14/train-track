@@ -16,6 +16,8 @@ Change `localhost` to your desired host, and `8080` to the port you want to run 
 
 ```mkdir .data && cp test-db/db.sqlite .data```
 
+```./train-track prod localhost 8080```
+
 ---
 
 **Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted`, `/templates` and `/.data` directories along with it.
@@ -63,7 +65,7 @@ The partials are constructed in a similar way to Web Components or React compone
 </script>
 ```
 
-During the application's build stage, all HTML files have the Javascript extracted, and placed into a new file of the same name (eg. exercise-list.html -> exercise-list.js). Which is then imported on pages that will use that partial. This lets us develop the Javascript along side HTML, but only have a singe Js file for n number of HTML partials.
+During the application's build stage, all HTML files (that contain Js) have the Javascript extracted, and placed into a new file of the same name (eg. exercise-list.html -> exercise-list.js). Which is then imported on pages that will use that partial. This lets us develop the Javascript along side HTML, but only have a singe Js file for n number of HTML partials.
 
 ```
 //@handle:data-delete
@@ -71,7 +73,7 @@ During the application's build stage, all HTML files have the Javascript extract
 
 This is a directive which tells the parser to associate a particular function (deleteExercise in this case) with a click Event + data-* attribute. "click" event handlers are generated at build time, and automatically imported into a page.
 
-In order to prevent naming collisions, and `@handle` referenced data-* attributes are modified with an id, unique to that HTML partial. So, `data-delete` will be changed to something like `data-delete-123456789` when the app is launched.
+In order to prevent naming collisions, `@handle` referenced data-* attributes are modified with an id, unique to that HTML partial. So, `data-delete` will be changed to something like `data-delete-123456789` when the app is launched.
 
 `swapContent` is a utility function which issues a `GET` request to the first argument, and replaces the content of the second argument (a div, typically) with the result.
 
@@ -104,7 +106,7 @@ Watching attributes (ie. props) is more or less the same. Plus, Web Components g
 
 The primary pain points for Web Components are including them on a page and styling. If you have an HTML file for the `<template>` and a Javascript file for the component class as I do, you have to supply both files to a page. While you can write the HTML in a template literal, it fells messy to me. Go templating makes file inclusion relatively trivial, but it's more work than a React import.
 
-Styling leaves quite a bit to be desired. While CSS variables, and certain properties like font-family will cross into the Shadow DOM, none of your classes will. So, utility classes can't be used in them. There are ways to define styles from outside of a Web Component by using the [part](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::part) pseudo selector, but your left defining styles twice. Which isn't ideal.
+Styling leaves quite a bit to be desired. While CSS variables, and certain properties like font-family will cross into the Shadow DOM, none of your classes will. So, utility classes can't be used in them. There are ways to define styles from outside of a Web Component by using the [part](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/::part) pseudo selector, but you're left defining styles twice. Which isn't ideal.
 
 In my opinion, an option to annotate existing CSS classes, exposing them to the Shadow DOM, would work best.
 

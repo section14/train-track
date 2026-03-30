@@ -76,6 +76,4 @@ window.onload = function () {
 
 mediaQuery.addEventListener("change", handleSizeChange);
 
-//const el = document.querySelectorAll("div[data-div-load]");
-//document.addEventListener("change", divOnLoad);
 document.addEventListener("movement-changed", movementChanged);

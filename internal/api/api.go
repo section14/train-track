@@ -113,20 +113,6 @@ func extractSystemTemplates(
 	return js, err
 }
 
-// todo: I think you're going to have to write forward "dummy" declarations like this
-/*
-func forwardFuncs() template.FuncMap {
-	return template.FuncMap{
-		"addClick":    func(id int) template.HTMLAttr { return "" },
-		"deleteClick": func(id int) template.HTMLAttr { return "" },
-		"editClick":   func(id int) template.HTMLAttr { return "" },
-		"editCancel":  func(id int) template.HTMLAttr { return "" },
-		"patchClick":  func(id int) template.HTMLAttr { return "" },
-		"selectClick": func(id int) template.HTMLAttr { return "" },
-	}
-}
-*/
-
 func systemTemplates(
 	root *template.Template,
 	rootDir string,
@@ -134,8 +120,6 @@ func systemTemplates(
 
 	cleanRoot := filepath.Clean(rootDir)
 	pfx := len(cleanRoot) + 1
-
-	//root.Funcs(forwardFuncs())
 
 	err := filepath.Walk(cleanRoot, func(path string, info os.FileInfo, e1 error) error {
 		if !info.IsDir() && strings.HasSuffix(path, ".html") {
@@ -169,8 +153,6 @@ func embeddedTemplates(
 	funcMap template.FuncMap) (*template.Template, error) {
 
 	cleanRoot := filepath.Clean(rootDir)
-
-	//root.Funcs(forwardFuncs())
 
 	err := fs.WalkDir(files, cleanRoot, func(path string, d fs.DirEntry, e1 error) error {
 		if !d.IsDir() && strings.HasSuffix(path, ".html") {

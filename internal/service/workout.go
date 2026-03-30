@@ -2,13 +2,9 @@ package service
 
 import (
 	"encoding/json"
-	//"fmt"
 	"net/http"
 	"strconv"
 	"time"
-
-	//"strconv"
-	//"time"
 
 	"github.com/section14/train-track/internal/model"
 )
@@ -21,7 +17,6 @@ type WorkoutManager interface {
 	DeleteMovement(id int, workoutId int) ([]model.Movement, error)
 	AddWorkout() error
 	UpdateWorkout(e model.Workout) ([]model.Movement, error)
-	//DeleteWorkout(id int) ([]model.Workout, error)
 	DeleteWorkout(id int) error
 }
 

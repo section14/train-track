@@ -30,6 +30,7 @@ func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
 	head := HeadImports{
 		Title: "Exercises",
 		Js: []string{
+            // Js to import for this page
 			appendPath("/pages/exercises.js"),
 			appendPath("/partials/exercise-list.js"),
 		},
@@ -37,7 +38,7 @@ func (s *Server) exercisePage(w http.ResponseWriter, r *http.Request) {
 
 	err := s.tpls.ExecuteTemplate(w, "pages/exercises.html", head)
 	if err != nil {
-		fmt.Println("couldn't open widgets", err)
+		fmt.Println("couldn't open exercises page", err)
 	}
 }
 
@@ -45,6 +46,7 @@ func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
 	head := HeadImports{
 		Title: "Workouts",
 		Js:    []string{
+            // Js to import for this page
             appendPath("/pages/workouts.js"),
 			appendPath("/pages/exercises.js"),
 			appendPath("/partials/workout-list.js"),
@@ -55,6 +57,6 @@ func (s *Server) workoutPage(w http.ResponseWriter, r *http.Request) {
 
 	err := s.tpls.ExecuteTemplate(w, "pages/workouts.html", head)
 	if err != nil {
-		fmt.Println("couldn't open workouts", err)
+		fmt.Println("couldn't open workouts page", err)
 	}
 }
