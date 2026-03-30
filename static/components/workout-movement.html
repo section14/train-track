@@ -12,6 +12,15 @@
             gap: var(--spacing-2);
             grid-template-rows: 1fr;
             grid-template-columns: 1fr 1fr 1fr 1fr min-content;
+            margin-bottom: 0;
+        }
+
+        @media(width < 760px) {
+            .container {
+                grid-template-rows: 1fr 1fr;
+                grid-template-columns: 1fr;
+                margin-bottom: 1rem;
+            }
         }
 
         button {
