@@ -1,0 +1,60 @@
+theme:
+  - color:
+      primary: "#00AAD4"
+    generateShades: true
+  - color:
+      secondary: "#F56A00"
+    generateShades: true
+  - color:
+      light: "#FFFFFF"
+    generateShades: false
+  - color:
+      "med-light": "#D0D0D0"
+    generateShades: false
+  - color:
+      med: "#959595"
+    generateShades: true
+  - color:
+      dark: "#303030"
+    generateShades: false
+
+shades:
+  - "100"
+  - "200"
+  - "300"
+  - "400"
+  - "500"
+  - "600"
+  - "700"
+  - "800"
+  - "900"
+
+spacing:
+  - 1: "0.25rem"
+  - 2: "0.5rem"
+  - 3: "1.0rem"
+  - 4: "1.5rem"
+  - 5: "2.0rem"
+  - 6: "2.5rem"
+
+padding:
+  - 0: "0"
+  - 1: "0.25rem"
+  - 2: "0.5rem"
+  - 3: "1.0rem"
+  - 4: "1.5rem"
+
+margin:
+  - 0: "0"
+  - 1: "0.25rem"
+  - 2: "0.5rem"
+  - 3: "1.0rem"
+  - 4: "1.5rem"
+
+border:
+  - 0: "none"
+  - 1: "1px"
+  - 2: "2px"
+  - 3: "3px"
+  - 4: "4px"
+  - 5: "5px"

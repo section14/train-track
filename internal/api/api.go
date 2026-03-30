@@ -59,7 +59,6 @@ func extractSystemTemplates(
 	targetDir,
 	extractedDir string) (map[string]string, error) {
 	cleanRoot := filepath.Clean(rootDir)
-	//js := make([]string, 0)
 	js := make(map[string]string)
 
 	eventHandlers := make([]extract.Handler, 0)
