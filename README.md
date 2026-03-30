@@ -16,11 +16,9 @@ Change `localhost` to your desired host, and `8080` to the port you want to run 
 
 ```mkdir .data && cp test-db/db.sqlite .data```
 
-```./train-track prod localhost 8080```
-
 ---
 
-**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted`, `/templates` and `/.data` directories along with it. Embedding `/static` and `/templates` in the binary is on the roadmap.
+**Note:** If you intend to run the application outside of the repo directory, you'll need to copy the `/static`, `/extracted`, `/templates` and `/.data` directories along with it.
 
 ---
 
