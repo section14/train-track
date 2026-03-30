@@ -33,6 +33,10 @@ ul li {
     padding: 0;
 }
 
+h3 {
+    margin-left: var(--spacing-2);
+}
+
 /* app -------------------------------------------------- */
 
 #app-wrapper {
@@ -126,7 +130,9 @@ ul li {
         border-radius: 0.325rem;
         cursor: pointer;
         /*border-bottom: 2px solid transparent;*/
-        transition: background-color 0.25s ease, border-color 0.25s ease;
+        transition:
+            background-color 0.25s ease,
+            border-color 0.25s ease;
 
         &:hover {
             color: oklch(from var(--light) calc(l - 0.14) c h);
@@ -155,8 +161,16 @@ ul li {
 }
 
 @media (width < 650px) {
+    h3 {
+        font-size: 0.9rem;
+        margin-left: 0;
+        * {
+            font-size: 0.9rem;
+        }
+    }
+
     .nav {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 4fr;
 
         & .logo-container {
             & .logo-text {
@@ -489,7 +503,7 @@ into html. Maybe just make a web component
         flex: 1 0 auto;
 
         &.show {
-            display: block;
+            display: flex;
         }
 
         &.hide {
@@ -498,10 +512,18 @@ into html. Maybe just make a web component
     }
 
     & .item-name-edit {
-        flex: 1 0 auto;
+        display: flex;
+        flex: 1 1 auto;
+        width: 100%;
+
+        & input {
+            max-width: 200px;
+            width: 100%;
+        }
 
         &.show {
-            display: block;
+            display: flex;
+            width: min-content;
         }
 
         &.hide {

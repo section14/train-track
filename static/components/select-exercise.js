@@ -16,7 +16,7 @@ class SelectExercise extends HTMLElement {
 
     selectField;
     labelElem;
-    showLabel = false;
+    showLabel = "no";
 
     dataObject = {
         name: "",
@@ -70,7 +70,7 @@ class SelectExercise extends HTMLElement {
     renderLabel() {
         //label
         this.labelElem = this.shadowRoot.querySelector("label");
-        if (this.dataObject.label && this.showLabel) {
+        if (this.dataObject.label && this.showLabel === "yes") {
             this.labelElem.style.setProperty("display", "block");
             this.labelElem.innerHTML = this.dataObject.label;
         } else {

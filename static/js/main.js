@@ -27,9 +27,20 @@ const movementChanged = (e) => {
     }
 };
 
-const mediaQuery = window.matchMedia("(width < 1100px)");
+const mediaQueryLogo = window.matchMedia("(width < 700px)");
+const mediaQueryExList = window.matchMedia("(width < 1100px)");
 
-const handleSizeChange = (e) => {
+const handleLogoChange = (e) => {
+    if (e.matches) {
+        const logoText = document.getElementById("logo-text")
+        logoText.innerHTML = `<span class="text-med">T</span><span class="text-primary">T</span>`
+    } else {
+        const logoText = document.getElementById("logo-text")
+        logoText.innerHTML = `<span class="text-med">TRAIN</span><span class="text-primary">TRACK</span>`
+    }
+}
+
+const handleListChange = (e) => {
     if (e.matches) {
         const button = document.getElementById("toggle-exercise-button");
 
@@ -71,9 +82,11 @@ window.onload = function () {
     }
 
     globalThis.docLoaded = true;
-    handleSizeChange(mediaQuery);
+    handleLogoChange(mediaQueryLogo);
+    handleListChange(mediaQueryExList);
 };
 
-mediaQuery.addEventListener("change", handleSizeChange);
+mediaQueryExList.addEventListener("change", handleListChange);
+mediaQueryLogo.addEventListener("change", handleLogoChange);
 
 document.addEventListener("movement-changed", movementChanged);

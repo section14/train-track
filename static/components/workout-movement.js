@@ -130,7 +130,44 @@ class WorkoutMovement extends HTMLElement {
         this.debouncer(() => this.submitForm(e));
     }
 
+    mobileLayout(e) {
+        const buttons = this.shadowRoot.getElementById("button-group")
+
+        if (e.matches) {
+            buttons.style.setProperty("margin-top", "0");
+            buttons.style.setProperty("padding-bottom", "1.0rem");
+            buttons.style.setProperty("border-bottom", "1px solid var(--med)");
+            buttons.style.setProperty("justify-content", "end");
+            this.exercise.setAttribute("show-label", "yes");
+            this.sets.setAttribute("show-label", "yes");
+            this.reps.setAttribute("show-label", "yes");
+            this.weight.setAttribute("show-label", "yes");
+        } else {
+            if (this.index === "0") {
+                buttons.style.setProperty("margin-top", "2.0rem");
+                this.exercise.setAttribute("show-label", "yes");
+                this.sets.setAttribute("show-label", "yes");
+                this.reps.setAttribute("show-label", "yes");
+                this.weight.setAttribute("show-label", "yes");
+            } else {
+                buttons.style.setProperty("margin-top", "0");
+                this.exercise.setAttribute("show-label", "no");
+                this.sets.setAttribute("show-label", "no");
+                this.reps.setAttribute("show-label", "no");
+                this.weight.setAttribute("show-label", "no");
+            }
+
+            buttons.style.setProperty("padding-bottom", "0");
+            buttons.style.setProperty("border-bottom", "0");
+            buttons.style.setProperty("justify-content", "start");
+        }
+    }
+
     connectedCallback() {
+        // mobile check
+        this.mediaMobile = window.matchMedia("(width < 760px)");
+        this.mediaMobile.addEventListener("change", this.mobileLayout.bind(this))
+
         // form submit listener
         this.movementForm = this.shadowRoot.getElementById("movement-form");
         this.movementForm.addEventListener("submit", this.submitForm.bind(this));
@@ -154,22 +191,15 @@ class WorkoutMovement extends HTMLElement {
         this.reps.setAttribute("value", this.dataObject.reps);
         this.weight.setAttribute("value", this.dataObject.weight);
 
-        // show labels and offset buttons on first item
-        if (this.index === "0") {
-            const buttons = this.shadowRoot.getElementById("button-group")
-            buttons.style.setProperty("margin-top", "2.0rem");
-
-            this.exercise.setAttribute("show-label", true);
-            this.sets.setAttribute("show-label", true);
-            this.reps.setAttribute("show-label", true);
-            this.weight.setAttribute("show-label", true);
-        }
+        // check size on first render
+        this.mobileLayout(this.mediaMobile)
 
         // register current data with parent
         this.submitForm(null);
     }
 
     disconnectedCallback() {
+        this.mediaMobile.removeEventListener("change", this.mobileLayout.bind(this))
         this.movementForm.removeEventListener("submit", this.submitForm.bind(this));
         this.movementForm.removeEventListener("movement-update", this.movementUpdate.bind(this));
         this.deleteBtn.removeEventListener("click", this.deleteMovement.bind(this));

@@ -19,7 +19,7 @@ class FormInput extends HTMLElement {
     //input field refs
     inputField;
     labelElem;
-    showLabel = false;
+    showLabel = "no";
     style = "";
 
     //component state
@@ -64,7 +64,7 @@ class FormInput extends HTMLElement {
     renderLabel() {
         //label
         this.labelElem = this.shadowRoot.querySelector("label");
-        if (this.dataObject.label && this.showLabel) {
+        if (this.dataObject.label && this.showLabel === "yes") {
             this.labelElem.style.setProperty("display", "block");
             this.labelElem.innerHTML = this.dataObject.label;
         } else {
